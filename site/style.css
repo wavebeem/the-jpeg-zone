@@ -65,8 +65,10 @@ label {
 }
 
 .Retro3D {
+  -webkit-appearance: none;
   color: black;
   background: #eee;
+  border-radius: 0;
   border-top: 2px solid white;
   border-left: 2px solid white;
   border-right: 2px solid #aaa;
