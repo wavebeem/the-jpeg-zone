@@ -1,0 +1,61 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  padding: 10px 20px;
+}
+
+body {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 20px;
+  text-align: center;
+  font-family: Helvetica, sans-serif;
+  background: #cce;
+  color: #446;
+}
+
+input {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+h1 {
+  font-size: 40px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.FileInput {
+  width: 100%;
+  height: 50px;
+  border: 3px dashed rgba(0, 0, 0, 0.10);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.FileInput:hover {
+  border-color: rgba(0, 0, 0, 0.20);
+}
+
+.FileOutput {
+  margin-top: 30px;
+  border: 3px solid white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.20);
+}
+
+.FileOutput__hidden {
+  visibility: hidden;
+}
