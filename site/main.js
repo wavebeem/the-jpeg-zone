@@ -21,9 +21,10 @@ function jpegify(quality, url) {
 }
 
 function display(url) {
-  var elem = $(".FileOutput");
-  elem.src = url;
-  elem.classList.remove("FileOutput__hidden");
+  $(".DownloadLink").href = url;
+  $(".DownloadLink").classList.remove("hidden");
+  $(".FileOutput").classList.remove("hidden");
+  $(".FileOutput").src = url;
 }
 
 function setText(elem, text) {
@@ -88,4 +89,8 @@ $(".FileInput").addEventListener("dragover", function(event) {
   console.log(event);
   event.preventDefault();
   event.dataTransfer.dropEffect = "copy";
+});
+
+$(".FileOutput").addEventListener("click", function(event) {
+  $(".DownloadLink").click();
 });

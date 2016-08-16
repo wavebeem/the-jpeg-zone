@@ -11,7 +11,7 @@ body {
   margin: 0 auto;
   font-size: 20px;
   text-align: center;
-  font-family: Helvetica, sans-serif;
+  font-family: "Comic Sans MS", "Verdana", "Helvetica", sans-serif;
   background: #f8f8f8;
   color: black;
 }
@@ -37,12 +37,12 @@ h2 {
   margin-bottom: 30px;
 }
 
-img {
-  max-width: 100%;
+h1,
+h2 {
+  font-weight: normal;
 }
 
 label {
-  font-weight: bold;
   display: block;
   margin-bottom: 10px;
 }
@@ -86,11 +86,19 @@ label {
 }
 
 .FileOutput {
-  margin-top: 30px;
+  display: block;
+  width: 100%;
   margin-bottom: 30px;
   max-width: 100%;
+  cursor: pointer;
 }
 
-.FileOutput__hidden {
+.DownloadLink {
+  display: block;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.hidden {
   display: none;
 }
