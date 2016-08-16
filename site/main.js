@@ -4,25 +4,10 @@ function $(sel) {
   return document.querySelector(sel);
 }
 
-function debounce(delay, f) {
-  var lastRun = null;
-  var id = null;
-  return function() {
-    if (id !== null) {
-      id = setTimeout(f, delay);
-    } else {
-      clearTimeout(id);
-      id = setTimeout(f, delay);
-    }
-  };
-}
-
 var state = {
   quality: 0.01,
   url: null,
 };
-
-var DELAY = 500;
 
 function jpegify(quality, url) {
   var elem = document.createElement("img");
@@ -59,11 +44,11 @@ function readFile(file) {
   });
 }
 
-var tryRun = debounce(DELAY, function() {
+function tryRun() {
   if (state.url) {
     run(state.url, state.quality);
   }
-});
+}
 
 function run(url, quality) {
   readFile(url)
@@ -78,13 +63,29 @@ function run(url, quality) {
 $(".FileQuality").addEventListener("input", function(event) {
   var n = event.target.value;
   state.quality = n / 100;
-  setText($(".FileQualityLabel"), n + "%");
   tryRun();
 });
 
-$(".FileInput").addEventListener("change", function(event) {
+$("._FileInput").addEventListener("change", function(event) {
   if (event.target.files.length > 0) {
     state.url = event.target.files[0];
     tryRun();
   }
+});
+
+$(".FileInput").addEventListener("click", function(event) {
+  $("._FileInput").click();
+});
+
+$(".FileInput").addEventListener("drop", function(event) {
+  console.log(event);
+  event.preventDefault();
+  state.url = event.dataTransfer.files[0];
+  tryRun();
+});
+
+$(".FileInput").addEventListener("dragover", function(event) {
+  console.log(event);
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "copy";
 });
