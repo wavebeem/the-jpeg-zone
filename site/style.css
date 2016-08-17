@@ -31,14 +31,25 @@ input {
 a {
   color: dodgerblue;
   text-decoration: none;
-  border-bottom: 0.1em solid dodgerblue;
+  border-bottom: 0.1em solid currentColor;
 }
 
 a:hover {
+  color: darkslateblue;
+}
+
+.OutlineButton {
+  display: inline-block;
+  color: dodgerblue;
+  text-decoration: none;
+  padding: 0.2em 0.5em;
+  border: 0.1em solid dodgerblue;
+  border-radius: 4px;
+}
+
+.OutlineButton:hover {
   background: dodgerblue;
   color: snow;
-  box-shadow: 0 0 0 3px dodgerblue;
-  border-radius: 4px;
 }
 
 h1 {
@@ -68,6 +79,7 @@ label {
   outline-offset: 4px;
 }
 
+.OutlineButton:focus,
 select:focus,
 button:focus {
   outline-offset: -10px;
