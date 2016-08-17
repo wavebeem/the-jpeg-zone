@@ -16,6 +16,8 @@ function jpegify(quality, url) {
   canvas.width = elem.width;
   canvas.height = elem.height;
   var context = canvas.getContext("2d");
+  context.fillStyle = "white";
+  context.fillRect(0, 0, elem.width, elem.height);
   context.drawImage(elem, 0, 0);
   return canvas.toDataURL("image/jpeg", quality);
 }
