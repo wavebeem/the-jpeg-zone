@@ -7,13 +7,18 @@ html {
 }
 
 body {
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
   font-size: 20px;
   text-align: center;
-  font-family: "Comic Sans MS", "Verdana", "Helvetica", sans-serif;
-  background: #f8f8f8;
-  color: black;
+  font-family:
+    "Comic Sans MS",
+    "Papyrus",
+    "Verdana",
+    "Helvetica",
+    sans-serif;
+  background: cornsilk;
+  color: chocolate;
 }
 
 button,
@@ -24,7 +29,7 @@ input {
 }
 
 a {
-  color: inherit;
+  color: cornflowerblue;
   text-decoration: underline;
 }
 
@@ -48,11 +53,17 @@ label {
 }
 
 :focus {
-  outline: 3px dashed black;
+  outline: 4px dotted lightseagreen;
+  outline-offset: 4px;
+}
+
+select:focus,
+button:focus {
+  outline-offset: -10px;
 }
 
 .Or {
-  opacity: 0.50;
+  color: salmon;
 }
 
 ._FileInput {
@@ -67,12 +78,9 @@ label {
 .Retro3D {
   -webkit-appearance: none;
   color: black;
-  background: #eee;
-  border-radius: 0;
-  border-top: 2px solid white;
-  border-left: 2px solid white;
-  border-right: 2px solid #aaa;
-  border-bottom: 2px solid #aaa;
+  background: honeydew;
+  border-radius: 4px;
+  border: 4px solid lightpink;
 }
 
 .FileInput {
@@ -103,4 +111,6 @@ label {
 
 .hidden {
   display: none;
+}
+;
 }
