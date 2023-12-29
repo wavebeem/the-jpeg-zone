@@ -11,12 +11,7 @@ body {
   margin: 0 auto;
   font-size: 20px;
   text-align: center;
-  font-family:
-    "Comic Sans MS",
-    "Papyrus",
-    "Verdana",
-    "Helvetica",
-    sans-serif;
+  font-family: "Comic Sans MS", "Papyrus", "Verdana", "Helvetica", sans-serif;
   background: cornsilk;
   color: chocolate;
 }
@@ -38,8 +33,15 @@ a:hover {
   color: darkslateblue;
 }
 
-.OutlineButton {
+jpeg-app {
+  display: block;
+}
+
+.OutlineButton:where(:not([hidden])) {
   display: inline-block;
+}
+
+.OutlineButton {
   color: dodgerblue;
   text-decoration: none;
   padding: 10px 20px;
@@ -58,7 +60,7 @@ h1 {
   font-size: 40px;
 }
 
-h2 {
+footer {
   font-size: 20px;
   margin-top: 20px;
   margin-bottom: 30px;
@@ -91,17 +93,13 @@ button:focus {
   color: salmon;
 }
 
-._FileInput {
-  display: none;
-}
-
 .FileQuality {
   padding: 10px;
   width: 100%;
 }
 
 .Retro3D {
-  -webkit-appearance: none;
+  appearance: none;
   cursor: pointer;
   font-weight: bold;
   color: green;
@@ -125,17 +123,23 @@ button:focus {
   font-weight: bold;
 }
 
-.FileOutput {
+.FileOutput:where(:not([hidden])) {
   display: block;
+}
+
+.FileOutput {
   width: 100%;
   margin-bottom: 30px;
   max-width: 100%;
   cursor: pointer;
 }
 
+.DownloadLink:where(:not([hidden])) {
+  display: table;
+}
+
 .DownloadLink {
   font-size: 40px;
-  display: table;
   margin-left: auto;
   margin-right: auto;
   margin-top: 40px;

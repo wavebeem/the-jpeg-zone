@@ -1,2 +1,3 @@
-# jpeg.zone
-Enhance images with the power of JPEG!
+# [jpeg.wavebeem.com](https://jpeg.wavebeem.com)
+
+Make deep fried JPEG images

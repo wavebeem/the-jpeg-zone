@@ -1,98 +1,125 @@
-"use strict";
+class JpegApp extends HTMLElement {
+  /** @type {number} */
+  quality = 0.01;
 
-function $(sel) {
-  return document.querySelector(sel);
-}
+  /** @type {File | undefined} */
+  file = undefined;
 
-var state = {
-  quality: 0.01,
-  url: null,
-};
+  /** @type {string | undefined} */
+  url = undefined;
 
-function jpegify(quality, url) {
-  var elem = document.createElement("img");
-  elem.src = url;
-  var canvas = document.createElement("canvas");
-  canvas.width = elem.width;
-  canvas.height = elem.height;
-  var context = canvas.getContext("2d");
-  context.fillStyle = "white";
-  context.fillRect(0, 0, elem.width, elem.height);
-  context.drawImage(elem, 0, 0);
-  return canvas.toDataURL("image/jpeg", quality);
-}
+  canvas = document.createElement("canvas");
+  ctx = this.canvas.getContext("2d");
 
-function display(url) {
-  $(".DownloadLink").href = url;
-  $(".DownloadLink").classList.remove("hidden");
-  $(".FileOutput").classList.remove("hidden");
-  $(".FileOutput").src = url;
-}
+  connectedCallback() {
+    this.abortController = new AbortController();
+    const { signal } = this.abortController;
+    // this.addEventListener("click", this, { signal });
 
-function setText(elem, text) {
-  elem.innerHTML = "";
-  elem.appendChild(document.createTextNode(text));
-}
-
-function readFile(file) {
-  return new Promise(function(resolve, reject) {
-    var reader = new FileReader();
-    reader.addEventListener("load", function() {
-      resolve(reader.result);
+    this.$(".FileQuality").addEventListener("input", (event) => {
+      const n = event.target.value;
+      this.quality = n / 100;
+      this.run();
     });
-    reader.addEventListener("error", function() {
-      reject();
-    });
-    reader.readAsDataURL(file);
-  });
-}
 
-function tryRun() {
-  if (state.url) {
-    run(state.url, state.quality);
+    this.$("._FileInput").addEventListener("change", (event) => {
+      if (event.target.files.length > 0) {
+        this.file = event.target.files[0];
+        this.run();
+      }
+    });
+
+    this.$(".FileInput").addEventListener("click", (event) => {
+      this.$("._FileInput").click();
+    });
+
+    this.$(".FileInput").addEventListener("drop", (event) => {
+      event.preventDefault();
+      this.file = event.dataTransfer.files[0];
+      this.run();
+    });
+
+    this.$(".FileInput").addEventListener("dragover", (event) => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+    });
+
+    this.$(".FileOutput").addEventListener("click", (event) => {
+      this.$(".DownloadLink").click();
+    });
+  }
+
+  disconnectedCallback() {
+    this.abortController.abort();
+  }
+
+  /** @param event {Event} */
+  handleEvent(event) {}
+
+  /** @param img {Image} */
+  deepFry(img) {
+    this.canvas.width = img.width;
+    this.canvas.height = img.height;
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(0, 0, img.width, img.height);
+    this.ctx.drawImage(img, 0, 0);
+    return this.canvas.toDataURL("image/jpeg", this.quality);
+  }
+
+  /**
+   * @param {File} file
+   * @returns {Promise<string>}
+   */
+  async readFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        resolve(reader.result);
+      });
+      reader.addEventListener("error", () => {
+        reject(new Error(`couldn't read file: ${file.name}`));
+      });
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /**
+   * @param {string} url
+   * @returns {Promise<Image>}
+   */
+  async loadImage(url) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => {
+        resolve(image);
+      });
+      image.addEventListener("error", () => {
+        reject(new Error(`couldn't load image: ${url}`));
+      });
+      image.src = url;
+    });
+  }
+
+  async run() {
+    if (!this.file) {
+      return;
+    }
+    const dataUrl = await this.readFile(this.file);
+    const img = await this.loadImage(dataUrl);
+    this.url = this.deepFry(img);
+    const downloadLink = this.$(".DownloadLink");
+    downloadLink.download = this.file.name;
+    downloadLink.href = this.url;
+    downloadLink.hidden = false;
+    const fileOutput = this.$(".FileOutput");
+    fileOutput.hidden = false;
+    fileOutput.src = this.url;
+  }
+
+  /** @param {string} selector */
+  $(selector) {
+    return document.querySelector(selector);
   }
 }
 
-function run(url, quality) {
-  readFile(url)
-    .then(jpegify.bind(null, quality))
-    .then(display)
-    .catch(function(err) {
-      console.error("Oopsy!");
-      console.log(err);
-    });
-}
-
-$(".FileQuality").addEventListener("input", function(event) {
-  var n = event.target.value;
-  state.quality = n / 100;
-  tryRun();
-});
-
-$("._FileInput").addEventListener("change", function(event) {
-  if (event.target.files.length > 0) {
-    state.url = event.target.files[0];
-    tryRun();
-  }
-});
-
-$(".FileInput").addEventListener("click", function(event) {
-  $("._FileInput").click();
-});
-
-$(".FileInput").addEventListener("drop", function(event) {
-  console.log(event);
-  event.preventDefault();
-  state.url = event.dataTransfer.files[0];
-  tryRun();
-});
-
-$(".FileInput").addEventListener("dragover", function(event) {
-  console.log(event);
-  event.preventDefault();
-  event.dataTransfer.dropEffect = "copy";
-});
-
-$(".FileOutput").addEventListener("click", function(event) {
-  $(".DownloadLink").click();
-});
+customElements.define("jpeg-app", JpegApp);
