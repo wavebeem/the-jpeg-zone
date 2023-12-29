@@ -1,0 +1,567 @@
+/**
+ * @license MIT
+ * 2bit-ui v0.3.0
+ * Copyright 2023 Sage Fennel
+ * https://2bit-ui.wavebeem.com
+ */
+
+.bit-auto,
+.bit-root {
+  /* Colors */
+  --bit-color-fg: hsl(22 100% 30%);
+  --bit-color-bg: hsl(22 100% 95%);
+  --bit-color-shadow: hsl(22 80% 80%);
+  --bit-color-accent: hsl(202 100% 30%);
+
+  /* General */
+  --bit-border-radius: 0px;
+  --bit-underline-thickness: 1px;
+
+  /* Button */
+  --bit-button-padding-horizontal: 1rem;
+  --bit-button-padding-vertical: 0.5rem;
+
+  /* Select */
+  --bit-select-padding-horizontal: 1rem;
+  --bit-select-padding-vertical: 0.5rem;
+
+  /* Input */
+  --bit-input-padding-horizontal: 0.5rem;
+  --bit-input-padding-vertical: 0.5rem;
+
+  /* Table */
+  --bit-table-padding-horizontal: 1rem;
+  --bit-table-padding-vertical: 0.5rem;
+
+  /* Card */
+  --bit-card-padding-horizontal: 1rem;
+  --bit-card-padding-vertical: 1rem;
+
+  /* Box */
+  --bit-box-padding-horizontal: 1px;
+  --bit-box-padding-vertical: 1px;
+
+  /* Fieldset & legend */
+  --bit-fieldset-padding-horizontal: 0.5rem;
+  --bit-fieldset-padding-vertical: 0.5rem;
+  --bit-legend-padding-horizontal: 0.5rem;
+  --bit-legend-padding-vertical: 0rem;
+
+  /* Pre & code */
+  --bit-pre-padding-horizontal: 1rem;
+  --bit-pre-padding-vertical: 1rem;
+  --bit-code-padding-horizontal: 0.2em;
+  --bit-code-padding-vertical: 0.1em;
+
+  /* Radio buttons & checkboxes */
+  --bit-radiocheckbox-size: 1.5em;
+  --bit-radiocheckbox-margin-horizontal: 4px;
+  --bit-radiocheckbox-margin-vertical: 4px;
+
+  background: var(--bit-color-bg);
+  color: var(--bit-color-fg);
+}
+
+/* Checkbox / Radio Button Field Container */
+
+.bit-field {
+  box-sizing: border-box;
+  display: grid;
+  grid-gap: 2px;
+  grid-template-columns: min-content 1fr;
+  align-items: center;
+}
+
+.bit-field > .bit-radio + *,
+.bit-field > .bit-checkbox + * {
+  user-select: none;
+}
+
+.bit-field > .bit-radio:disabled + *,
+.bit-field > .bit-checkbox:disabled + * {
+  opacity: 0.5;
+}
+
+.bit-auto label {
+  display: block;
+}
+
+.bit-auto label > input[type="radio"] + *,
+.bit-auto label > input[type="checkbox"] + *,
+.bit-auto input[type="radio"] + label,
+.bit-auto input[type="checkbox"] + label {
+  padding: 2px;
+  display: inline-block;
+  align-self: start;
+}
+
+.bit-auto label > input[type="radio"] + *,
+.bit-auto label > input[type="checkbox"] + * {
+  padding-left: 4px;
+}
+
+/* Checkbox / Radio Button */
+
+.bit-auto input[type="checkbox"],
+.bit-checkbox {
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-auto input[type="radio"],
+.bit-radio {
+  border-radius: 9999px;
+}
+
+.bit-auto input[type="checkbox"],
+.bit-auto input[type="radio"],
+.bit-checkbox,
+.bit-radio {
+  align-self: start;
+  vertical-align: top;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  font: inherit;
+  width: var(--bit-radiocheckbox-size);
+  height: var(--bit-radiocheckbox-size);
+  margin-left: var(--bit-radiocheckbox-margin-horizontal);
+  margin-right: var(--bit-radiocheckbox-margin-horizontal);
+  margin-top: var(--bit-radiocheckbox-margin-vertical);
+  margin-bottom: var(--bit-radiocheckbox-margin-vertical);
+  background: var(--bit-color-bg);
+  background-clip: padding-box;
+  padding: 2px;
+  color: var(--bit-color-fg);
+  border: 1px solid var(--bit-color-fg);
+  box-shadow: inset 0 2px 0 var(--bit-color-shadow);
+}
+
+.bit-auto input[type="checkbox"]:focus,
+.bit-auto input[type="radio"]:focus,
+.bit-checkbox:focus,
+.bit-radio:focus {
+  box-shadow: none;
+  outline: 3px solid var(--bit-color-accent);
+  outline-offset: -2px;
+}
+
+.bit-auto input[type="checkbox"]:checked,
+.bit-auto input[type="radio"]:checked,
+.bit-checkbox:checked,
+.bit-radio:checked {
+  background: var(--bit-color-accent);
+  box-shadow: inset 0 0 0 6px var(--bit-color-accent);
+}
+
+.bit-auto input[type="radio"]:checked,
+.bit-radio:checked {
+  --_bit-radio-blur: 0.25px;
+  box-shadow: none;
+  background-color: var(--bit-color-accent);
+  border-color: var(--bit-color-accent);
+  background-image: radial-gradient(
+    var(--bit-color-bg),
+    var(--bit-color-bg) calc(25% - var(--_bit-radio-blur)),
+    var(--bit-color-accent) calc(25% + var(--_bit-radio-blur)),
+    var(--bit-color-accent)
+  );
+}
+
+.bit-auto input[type="checkbox"]:checked,
+.bit-checkbox:checked {
+  --_bit-checkbox-blur: 0.5px;
+  --_bit-checkbox-size: 0.125em;
+  --_bit-checkbox-start: calc(50% - 0.5 * var(--_bit-checkbox-size));
+  --_bit-checkbox-end: calc(
+    var(--_bit-checkbox-start) + var(--_bit-checkbox-size)
+  );
+  border-color: var(--bit-color-accent);
+  background-color: var(--bit-color-accent);
+  background-image: linear-gradient(
+      45deg,
+      transparent,
+      transparent calc(var(--_bit-checkbox-start) - var(--_bit-checkbox-blur)),
+      var(--bit-color-bg) var(--_bit-checkbox-start),
+      var(--bit-color-bg) var(--_bit-checkbox-end),
+      transparent calc(var(--_bit-checkbox-end) + var(--_bit-checkbox-blur)),
+      transparent
+    ),
+    linear-gradient(
+      -45deg,
+      transparent,
+      transparent calc(var(--_bit-checkbox-start) - var(--_bit-checkbox-blur)),
+      var(--bit-color-bg) var(--_bit-checkbox-start),
+      var(--bit-color-bg) var(--_bit-checkbox-end),
+      transparent calc(var(--_bit-checkbox-end) + var(--_bit-checkbox-blur)),
+      transparent
+    );
+  box-shadow: inset 0 0 0 6px var(--bit-color-accent);
+}
+
+.bit-auto input[type="checkbox"]:checked:focus,
+.bit-auto input[type="radio"]:checked:focus,
+.bit-checkbox:checked:focus,
+.bit-radio:checked:focus {
+  box-shadow: inset 0 0 0 2px var(--bit-color-bg),
+    inset 0 0 0 6px var(--bit-color-accent);
+  outline: 3px solid var(--bit-color-accent);
+  outline-offset: -2px;
+}
+
+.bit-auto input[type="checkbox"]:disabled,
+.bit-auto input[type="radio"]:disabled,
+.bit-checkbox:disabled,
+.bit-radio:disabled {
+  background: transparent;
+  opacity: 0.5;
+  border-style: dotted;
+  box-shadow: none;
+}
+
+/* Table */
+
+.bit-auto table,
+.bit-table {
+  box-sizing: border-box;
+  background: var(--bit-color-bg);
+  color: var(--bit-color-fg);
+  border-collapse: collapse;
+}
+
+.bit-auto table th,
+.bit-table th {
+  padding: var(--bit-table-padding-vertical) var(--bit-table-padding-horizontal);
+  text-align: left;
+}
+
+.bit-auto table tbody tr:not(:last-of-type),
+.bit-table tbody tr:not(:last-of-type) {
+  border-bottom: 1px solid var(--bit-color-shadow);
+}
+
+.bit-auto table th,
+.bit-auto table td,
+.bit-table th,
+.bit-table td {
+  background: var(--bit-color-bg);
+  color: var(--bit-color-fg);
+  padding: var(--bit-table-padding-vertical) var(--bit-table-padding-horizontal);
+}
+
+.bit-auto table thead,
+.bit-table thead {
+  border-top: 0;
+  border-bottom: 1px solid var(--bit-color-fg);
+}
+
+.bit-auto table tfoot,
+.bit-table tfoot {
+  border-top: 1px solid var(--bit-color-fg);
+  border-bottom: 0;
+}
+
+/* Button */
+
+.bit-auto button,
+.bit-auto input[type="button"],
+.bit-auto input[type="submit"],
+.bit-auto input[type="color"],
+.bit-button {
+  box-sizing: border-box;
+  background: var(--bit-color-bg);
+  color: var(--bit-color-fg);
+  padding: var(--bit-button-padding-vertical)
+    var(--bit-button-padding-horizontal);
+  font: inherit;
+  border: 1px solid var(--bit-color-fg);
+  box-shadow: inset 0 -2px 0 var(--bit-color-shadow);
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-auto button:active,
+.bit-auto input[type="button"]:active,
+.bit-auto input[type="submit"]:active,
+.bit-auto input[type="color"]:active,
+.bit-button:active {
+  transform: translateY(1px);
+}
+
+.bit-auto button:focus,
+.bit-auto input[type="button"]:focus,
+.bit-auto input[type="submit"]:focus,
+.bit-auto input[type="color"]:focus,
+.bit-button:focus {
+  outline: 3px solid var(--bit-color-accent);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.bit-auto button:disabled,
+.bit-auto input[type="button"]:disabled,
+.bit-auto input[type="submit"]:disabled,
+.bit-auto input[type="color"]:disabled,
+.bit-button:disabled {
+  background: transparent;
+  transform: none;
+  opacity: 0.5;
+  box-shadow: none;
+  border-color: var(--bit-color-fg);
+  border-style: dotted;
+}
+
+/* Select */
+
+.bit-auto select,
+.bit-select {
+  --_bit-select-blur: 0.5px;
+  --_bit-select-handle-thickness: 2px;
+  --_bit-select-handle-width: 1.5rem;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  color: var(--bit-color-fg);
+  background-color: var(--bit-color-bg);
+  background-repeat: no-repeat;
+  background-image: linear-gradient(
+      -45deg,
+      transparent 50%,
+      var(--bit-color-bg) calc(50% + var(--_bit-select-blur))
+    ),
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--bit-color-bg) calc(50% + var(--_bit-select-blur))
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 50%,
+      var(--bit-color-fg) calc(50% + var(--_bit-select-blur))
+    ),
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--bit-color-fg) calc(50% + var(--_bit-select-blur))
+    );
+  background-position: calc(100% - 0.5rem)
+      calc(50% - var(--_bit-select-handle-thickness)),
+    calc(100% - 1rem) calc(50% - var(--_bit-select-handle-thickness)),
+    calc(100% - 0.5rem) 50%, calc(100% - 1rem) 50%;
+  background-size: 0.5rem 0.5rem;
+  box-shadow: inset 0 -2px 0 var(--bit-color-shadow);
+  padding: var(--bit-select-padding-vertical)
+    var(--bit-select-padding-horizontal);
+  padding-right: calc(
+    var(--bit-select-padding-horizontal) + var(--_bit-select-handle-width)
+  );
+  font: inherit;
+  border: 1px solid var(--bit-color-fg);
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-auto select:focus,
+.bit-select:focus {
+  outline: 3px solid var(--bit-color-accent);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.bit-auto select:-moz-focusring,
+.bit-select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 var(--bit-color-fg);
+}
+
+.bit-auto select:disabled,
+.bit-select:disabled {
+  background: transparent;
+  opacity: 0.5;
+  border-color: var(--bit-color-fg);
+  border-style: dotted;
+  box-shadow: none;
+}
+
+/* Link */
+
+.bit-auto a,
+.bit-link {
+  color: var(--bit-color-accent);
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--bit-underline-thickness);
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-auto a:focus,
+.bit-link:focus {
+  text-decoration-line: none;
+  outline: 2px solid var(--bit-color-accent);
+  outline-offset: 2px;
+}
+
+/* Input / Text Area */
+
+.bit-auto input[type="tel"],
+.bit-auto input[type="url"],
+.bit-auto input[type="text"],
+.bit-auto input[type="email"],
+.bit-auto input[type="search"],
+.bit-auto input[type="number"],
+.bit-auto input[type="password"],
+.bit-auto textarea,
+.bit-input {
+  box-sizing: border-box;
+  background: var(--bit-color-bg);
+  color: var(--bit-color-fg);
+  font: inherit;
+  padding: var(--bit-input-padding-vertical) var(--bit-input-padding-horizontal);
+  border: 1px solid var(--bit-color-fg);
+  box-shadow: inset 0 2px 0 var(--bit-color-shadow);
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-auto input[type="tel"]:focus,
+.bit-auto input[type="url"]:focus,
+.bit-auto input[type="text"]:focus,
+.bit-auto input[type="email"]:focus,
+.bit-auto input[type="search"]:focus,
+.bit-auto input[type="number"]:focus,
+.bit-auto input[type="password"]:focus,
+.bit-auto textarea:focus,
+.bit-input:focus {
+  outline: 3px solid var(--bit-color-accent);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.bit-auto input[type="tel"]:disabled,
+.bit-auto input[type="url"]:disabled,
+.bit-auto input[type="text"]:disabled,
+.bit-auto input[type="email"]:disabled,
+.bit-auto input[type="search"]:disabled,
+.bit-auto input[type="number"]:disabled,
+.bit-auto input[type="password"]:disabled,
+.bit-auto textarea:disabled,
+.bit-input:disabled {
+  background: transparent;
+  opacity: 0.5;
+  box-shadow: none;
+  border-color: var(--bit-color-fg);
+  border-style: dotted;
+}
+
+.bit-auto input[type="tel"]::placeholder,
+.bit-auto input[type="url"]::placeholder,
+.bit-auto input[type="text"]::placeholder,
+.bit-auto input[type="email"]::placeholder,
+.bit-auto input[type="search"]::placeholder,
+.bit-auto input[type="number"]::placeholder,
+.bit-auto input[type="password"]::placeholder,
+.bit-auto textarea::placeholder,
+.bit-input::placeholder {
+  color: var(--bit-color-fg);
+  opacity: 0.5;
+}
+
+.bit-auto input[type="tel"]::selection,
+.bit-auto input[type="url"]::selection,
+.bit-auto input[type="text"]::selection,
+.bit-auto input[type="email"]::selection,
+.bit-auto input[type="search"]::selection,
+.bit-auto input[type="number"]::selection,
+.bit-auto input[type="password"]::selection,
+.bit-auto textarea::selection,
+.bit-input::selection {
+  background: var(--bit-color-fg);
+  color: var(--bit-color-bg);
+}
+
+/* Fieldset and legend */
+
+.bit-auto fieldset,
+.bit-fieldset {
+  border: 1px solid var(--bit-color-shadow);
+  padding: var(--bit-fieldset-padding-vertical)
+    var(--bit-fieldset-padding-horizontal);
+  margin: 0;
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-auto legend,
+.bit-legend {
+  border: 0 solid var(--bit-color-shadow);
+  padding-top: var(--bit-legend-padding-vertical);
+  padding-right: var(--bit-legend-padding-horizontal);
+  padding-bottom: var(--bit-legend-padding-vertical);
+  padding-left: 0;
+  margin: 0;
+  margin-left: calc(-1 * var(--bit-fieldset-padding-vertical) - 1px);
+  border-radius: var(--bit-border-radius);
+}
+
+/* Firefox nonsense */
+
+.bit-auto ::-moz-focus-inner,
+.bit-checkbox::-moz-focus-inner,
+.bit-radio::-moz-focus-inner,
+.bit-select::-moz-focus-inner,
+.bit-button::-moz-focus-inner,
+.bit-input::-moz-focus-inner {
+  border: 0;
+}
+
+/* Miscellaneous */
+
+.bit-card {
+  box-sizing: border-box;
+  background: var(--bit-color-bg);
+  color: var(--bit-color-fg);
+  border: 1px solid var(--bit-color-shadow);
+  padding: var(--bit-card-padding-vertical) var(--bit-card-padding-horizontal);
+  box-shadow: inset 0 -1px 0 0 var(--bit-color-shadow);
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-box {
+  box-sizing: border-box;
+  background: var(--bit-color-bg);
+  color: var(--bit-color-fg);
+  border: 1px solid var(--bit-color-shadow);
+  padding: var(--bit-box-padding-vertical) var(--bit-box-padding-horizontal);
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-auto,
+.bit-scrollbar {
+  scrollbar-color: var(--bit-color-fg) var(--bit-color-bg);
+}
+
+.bit-svg {
+  fill: var(--bit-color-fg);
+}
+
+.bit-auto :not(pre) > code,
+.bit-auto kbd,
+.bit-auto samp,
+.bit-code {
+  background: var(--bit-color-fg);
+  color: var(--bit-color-bg);
+  padding: var(--bit-code-padding-vertical) var(--bit-code-padding-horizontal);
+  border-radius: var(--bit-border-radius);
+}
+
+.bit-auto hr,
+.bit-hr {
+  box-sizing: border-box;
+  border: 0;
+  border-top: 1px solid var(--bit-color-shadow);
+}
+
+.bit-auto pre,
+.bit-pre {
+  box-sizing: border-box;
+  background: var(--bit-color-fg);
+  color: var(--bit-color-bg);
+  scrollbar-color: var(--bit-color-bg) var(--bit-color-fg);
+  overflow-x: auto;
+  padding: var(--bit-pre-padding-vertical) var(--bit-pre-padding-horizontal);
+  border-radius: var(--bit-border-radius);
+}

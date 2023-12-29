@@ -33,7 +33,7 @@ class JpegApp extends HTMLElement {
     if (!(target instanceof HTMLElement)) {
       return;
     }
-    const { classList } = target;
+    const { classList, id } = target;
     if (type === "paste") {
       /** @type {File} */
       const [file] = clipboardData.files;
@@ -45,8 +45,8 @@ class JpegApp extends HTMLElement {
       }
       return;
     }
-    if (type === "click" && classList.contains("FileOutput")) {
-      this.#$(".DownloadLink").click();
+    if (type === "click" && id === "file-output") {
+      this.#$("#download-link").click();
       return;
     }
     if (type === "dragover") {
@@ -60,16 +60,16 @@ class JpegApp extends HTMLElement {
       this.#render();
       return;
     }
-    if (type === "click" && classList.contains("FileInput")) {
-      this.#$("._FileInput").click();
+    if (type === "click" && id === "file-input") {
+      this.#$("#file-input-real").click();
       return;
     }
-    if (type === "change" && classList.contains("_FileInput")) {
+    if (type === "change" && id === "file-input-real") {
       [this.#file] = event.target.files;
       this.#render();
       return;
     }
-    if (type === "input" && classList.contains("FileQuality")) {
+    if (type === "input" && id === "file-quality") {
       const n = Number(target.value);
       this.#quality = n / 100;
       this.#render();
@@ -128,12 +128,12 @@ class JpegApp extends HTMLElement {
     const dataUrl = await this.#readFile(this.#file);
     const img = await this.#loadImage(dataUrl);
     this.#url = this.#deepFry(img);
-    const downloadLink = this.#$(".DownloadLink");
+    const outputArea = this.#$("#output-area");
+    outputArea.hidden = false;
+    const downloadLink = this.#$("#download-link");
     downloadLink.download = `${this.#file.name}.jpg`;
     downloadLink.href = this.#url;
-    downloadLink.hidden = false;
-    const fileOutput = this.#$(".FileOutput");
-    fileOutput.hidden = false;
+    const fileOutput = this.#$("#file-output");
     fileOutput.src = this.#url;
   }
 
