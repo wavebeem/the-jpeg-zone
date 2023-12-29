@@ -91,6 +91,7 @@ button:focus {
   display: block;
   margin: 10px 0;
   color: salmon;
+  pointer-events: none;
 }
 
 .FileQuality {
@@ -132,6 +133,8 @@ button:focus {
   margin-bottom: 30px;
   max-width: 100%;
   cursor: pointer;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
 }
 
 .DownloadLink:where(:not([hidden])) {
