@@ -14,10 +14,12 @@ class JpegApp extends HTMLElement {
   connectedCallback() {
     this.abortController = new AbortController();
     const { signal } = this.abortController;
+    // Some events are global
+    addEventListener("dragover", this, { signal });
+    addEventListener("drop", this, { signal });
+    addEventListener("paste", this, { signal });
     this.addEventListener("change", this, { signal });
     this.addEventListener("click", this, { signal });
-    this.addEventListener("dragover", this, { signal });
-    this.addEventListener("drop", this, { signal });
     this.addEventListener("input", this, { signal });
   }
 
@@ -27,11 +29,22 @@ class JpegApp extends HTMLElement {
 
   /** @param event {Event} */
   handleEvent(event) {
-    const { type, target } = event;
+    const { type, target, clipboardData } = event;
     if (!(target instanceof HTMLElement)) {
       return;
     }
     const { classList } = target;
+    if (type === "paste") {
+      /** @type {File} */
+      const [file] = clipboardData.files;
+      if (file && file.type.startsWith("image/")) {
+        const name = String(Date.now());
+        const newFile = new File([file], name);
+        this.#file = newFile;
+        this.#render();
+      }
+      return;
+    }
     if (type === "click" && classList.contains("FileOutput")) {
       this.#$(".DownloadLink").click();
       return;
