@@ -11,22 +11,19 @@ body {
   max-width: 600px;
   padding: 1rem;
   margin: 0 auto;
-  font-size: 1.5rem;
   min-height: 100svh;
   font-family: system-ui, sans-serif;
+}
+
+@media (min-width: 800px) {
+  body {
+    font-size: 1.25rem;
+  }
 }
 
 img {
   max-width: 100%;
   height: auto;
-}
-
-h1 {
-  font-size: 3rem;
-}
-
-h2 {
-  font-size: 2rem;
 }
 
 jpeg-app {
@@ -44,10 +41,10 @@ jpeg-app {
 @media (prefers-color-scheme: dark) {
   .bit-auto,
   .bit-root {
-    --bit-color-bg: #333333;
-    --bit-color-fg: #cccccc;
-    --bit-color-shadow: #666666;
-    --bit-color-accent: #00ffcc;
+    --bit-color-bg: #333;
+    --bit-color-fg: #ccc;
+    --bit-color-shadow: #666;
+    --bit-color-accent: #0fc;
   }
 }
 

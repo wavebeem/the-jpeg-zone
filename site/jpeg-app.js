@@ -1,6 +1,9 @@
 class JpegApp extends HTMLElement {
   /** @type {number} */
-  #quality = 0.01;
+  #fryCount = 100;
+
+  /** @type {number} */
+  #fryQuality = 0.01;
 
   /** @type {File | undefined} */
   #file = undefined;
@@ -21,13 +24,18 @@ class JpegApp extends HTMLElement {
     this.addEventListener("change", this, { signal });
     this.addEventListener("click", this, { signal });
     this.addEventListener("input", this, { signal });
+    // Firefox likes to store form values across page loads...
+    this.#$("#fry-quality").value = this.#fryQuality;
+    this.#$("#fry-count").value = this.#fryCount;
   }
 
   disconnectedCallback() {
     this.abortController.abort();
   }
 
-  /** @param event {Event} */
+  /**
+   * @param event {Event}
+   */
   handleEvent(event) {
     const { type, target, clipboardData } = event;
     if (!(target instanceof HTMLElement)) {
@@ -69,22 +77,42 @@ class JpegApp extends HTMLElement {
       this.#render();
       return;
     }
-    if (type === "input" && id === "file-quality") {
-      const n = Number(target.value);
-      this.#quality = n / 100;
+    if (type === "input" && id === "fry-count") {
+      this.#fryCount = Number(target.value);
+      this.#render();
+      return;
+    }
+    if (type === "input" && id === "fry-quality") {
+      this.#fryQuality = Number(target.value);
       this.#render();
       return;
     }
   }
 
-  /** @param img {Image} */
-  #deepFry(img) {
+  #getFryQuality(i) {
+    const base = this.#fryQuality * 100;
+    return (base + ((i * 7) % 10)) / 100;
+  }
+
+  /**
+   * @param image {Image}
+   */
+  async #deepFry(image) {
+    let img = image;
     this.#canvas.width = img.width;
     this.#canvas.height = img.height;
     this.#ctx.fillStyle = "white";
     this.#ctx.fillRect(0, 0, img.width, img.height);
     this.#ctx.drawImage(img, 0, 0);
-    return this.#canvas.toDataURL("image/jpeg", this.#quality);
+    const count = this.#fryCount;
+    for (let i = 0; i < count; i++) {
+      this.#ctx.drawImage(img, 0, 0);
+      const quality = this.#getFryQuality(i);
+      const dataUrl = this.#canvas.toDataURL("image/jpeg", quality);
+      img = await this.#loadImage(dataUrl);
+      this.#ctx.drawImage(img, 0, 0);
+    }
+    return this.#canvas.toDataURL("image/jpeg");
   }
 
   /**
@@ -127,7 +155,7 @@ class JpegApp extends HTMLElement {
     }
     const dataUrl = await this.#readFile(this.#file);
     const img = await this.#loadImage(dataUrl);
-    this.#url = this.#deepFry(img);
+    this.#url = await this.#deepFry(img);
     const outputArea = this.#$("#output-area");
     outputArea.hidden = false;
     const downloadLink = this.#$("#download-link");
