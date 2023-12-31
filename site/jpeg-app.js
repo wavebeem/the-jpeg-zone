@@ -90,6 +90,11 @@ class JpegApp extends HTMLElement {
       this.#$("#file-input-real").click();
       return;
     }
+    if (type === "click" && id === "fry-it-again") {
+      this.#inputImage = this.#outputImage;
+      this.#render();
+      return;
+    }
     if (type === "change" && id === "file-input-real") {
       this.#loadFile(event.target.files[0]);
       this.#render();
@@ -221,7 +226,7 @@ class JpegApp extends HTMLElement {
     outputArea.hidden = false;
     const downloadLink = this.#$("#download-link");
     downloadLink.download = `${this.#filename}.jpg`;
-    downloadLink.href = this.#outputImage.href;
+    downloadLink.href = this.#outputImage.src;
     const fileOutputContainer = this.#$("#file-output-container");
     fileOutputContainer.innerHTML = "";
     fileOutputContainer.append(this.#outputImage);

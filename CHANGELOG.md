@@ -7,6 +7,7 @@
 - Added progress bar during deep fry
 - Disabled form controls during deep fry
 - Added a favicon
+- Added a link to the source code
 
 ## 2023-12-30
 
