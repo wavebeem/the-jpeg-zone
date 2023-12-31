@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>jpeg | wavebeem</title>
+    <link rel="icon" sizes="16x16" href="/favicon.png" />
     <link rel="stylesheet" href="/2bit-ui.css" />
     <link rel="stylesheet" href="/style.css" />
     <script type="module" src="/jpeg-app.js"></script>
@@ -19,6 +20,8 @@
       <p class="margin0">deep fried jpeg generator</p>
     </div>
     <jpeg-app class="box flex-auto">
+      <div hidden id="progress-bar" class="progress-bar"></div>
+
       <div class="bit-card box">
         <h2 class="margin0">info</h2>
         <p class="margin0">
@@ -27,77 +30,81 @@
         </p>
       </div>
 
-      <div class="bit-card box">
-        <input hidden id="file-input-real" type="file" accept="image/*" />
-        <h2 class="margin0">choose</h2>
-        <div class="box gap0">
-          <button id="file-input" class="bit-button" type="button">
-            choose an image
-          </button>
-          <p class="margin0">
-            <i>&ndash;or&ndash;</i>
-            drag &amp; drop
-          </p>
-          <p class="margin0">
-            <i>&ndash;or&ndash;</i>
-            copy &amp; paste
-          </p>
-        </div>
+      <form id="form">
+        <fieldset id="fieldset" class="bit-card box">
+          <input hidden id="file-input-real" type="file" accept="image/*" />
+          <h2 class="margin0">choose</h2>
+          <div class="box gap0">
+            <button id="file-input" class="bit-button" type="button">
+              choose an image
+            </button>
+            <p class="margin0">
+              <i>&ndash;or&ndash;</i>
+              drag &amp; drop
+            </p>
+            <p class="margin0">
+              <i>&ndash;or&ndash;</i>
+              copy &amp; paste
+            </p>
+          </div>
 
-        <label class="box gap1"
-          >how many times to fry
-          <select id="fry-count" class="bit-select">
-            <option value="100">100</option>
-            <option value="50">50</option>
-            <option value="25">25</option>
-            <option value="10">10</option>
-            <option value="5">5</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="2">2</option>
-            <option value="1">1</option>
-            <option value="0">0</option>
-          </select>
-        </label>
+          <div hidden id="file-input-container" class="bit-box"></div>
 
-        <label class="box gap1"
-          >fry quality per step (approximate)
-          <select id="fry-quality" class="bit-select">
-            <option value="0.01">1%</option>
-            <option value="0.02">2%</option>
-            <option value="0.03">3%</option>
-            <option value="0.04">4%</option>
-            <option value="0.05">5%</option>
-            <option value="0.1">10%</option>
-            <option value="0.2">20%</option>
-            <option value="0.3">30%</option>
-            <option value="0.4">40%</option>
-            <option value="0.5">50%</option>
-            <option value="0.6">60%</option>
-            <option value="0.7">70%</option>
-            <option value="0.8">80%</option>
-            <option value="0.9">90%</option>
-            <option value="1">100%</option>
-          </select>
-        </label>
+          <label class="box gap1"
+            >how many times to fry
+            <select id="fry-count" class="bit-select">
+              <option value="100">100</option>
+              <option value="50">50</option>
+              <option value="25">25</option>
+              <option value="10">10</option>
+              <option value="5">5</option>
+              <option value="4">4</option>
+              <option value="3">3</option>
+              <option value="2">2</option>
+              <option value="1">1</option>
+              <option value="0">0</option>
+            </select>
+          </label>
 
-        <label class="box gap1"
-          >maximum image resolution
-          <select id="fry-size" class="bit-select">
-            <option value="0.0625">1&frasl;16 megapixels</option>
-            <option value="0.125">1&frasl;8 megapixels</option>
-            <option value="0.25">1&frasl;4 megapixels</option>
-            <option value="0.5">1&frasl;2 megapixel</option>
-            <option value="1">1 megapixel (1000&times;1000)</option>
-            <option value="Infinity">original</option>
-          </select>
-        </label>
-      </div>
+          <label class="box gap1"
+            >fry quality per step (approximate)
+            <select id="fry-quality" class="bit-select">
+              <option value="0.01">1%</option>
+              <option value="0.02">2%</option>
+              <option value="0.03">3%</option>
+              <option value="0.04">4%</option>
+              <option value="0.05">5%</option>
+              <option value="0.1">10%</option>
+              <option value="0.2">20%</option>
+              <option value="0.3">30%</option>
+              <option value="0.4">40%</option>
+              <option value="0.5">50%</option>
+              <option value="0.6">60%</option>
+              <option value="0.7">70%</option>
+              <option value="0.8">80%</option>
+              <option value="0.9">90%</option>
+              <option value="1">100%</option>
+            </select>
+          </label>
+
+          <label class="box gap1"
+            >maximum image resolution
+            <select id="fry-size" class="bit-select">
+              <option value="0.0625">1&frasl;16 megapixels</option>
+              <option value="0.125">1&frasl;8 megapixels</option>
+              <option value="0.25">1&frasl;4 megapixels</option>
+              <option value="0.5">1&frasl;2 megapixel</option>
+              <option value="1">1 megapixel (1000&times;1000)</option>
+              <option value="Infinity">original</option>
+            </select>
+          </label>
+        </fieldset>
+      </form>
 
       <div id="output-area" class="box bit-card" hidden>
         <h2 class="margin0">result</h2>
         <a id="download-link" class="bit-button">download</a>
-        <img id="file-output" class="bit-box file-output" />
+        <div id="file-output-container" class="bit-box"></div>
       </div>
     </jpeg-app>
     <footer class="bit-card">

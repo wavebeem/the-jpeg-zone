@@ -1,21 +1,34 @@
 class JpegApp extends HTMLElement {
-  /** @type {number} */
   #fryCount = 25;
 
-  /** @type {number} */
   #fryQuality = 0.3;
 
-  /** @type {number} */
   #frySize = 2 ** -3;
 
-  /** @type {File | undefined} */
-  #file = undefined;
+  #progress = 0;
 
-  /** @type {string | undefined} */
-  #url = undefined;
+  /** @type {HTMLImageElement | undefined} */
+  #inputImage = undefined;
+
+  /** @type {HTMLImageElement | undefined} */
+  #outputImage = undefined;
+
+  /** @type {string} */
+  #filename = "the-jpeg-zone.jpg";
 
   #canvas = document.createElement("canvas");
   #ctx = this.#canvas.getContext("2d");
+
+  get progress() {
+    return this.#progress;
+  }
+
+  set progress(value) {
+    this.#progress = value;
+    const element = this.#$("#progress-bar");
+    element.style.setProperty("--percent", (value * 100).toFixed(2));
+    element.hidden = value >= 1;
+  }
 
   connectedCallback() {
     this.abortController = new AbortController();
@@ -27,6 +40,7 @@ class JpegApp extends HTMLElement {
     this.addEventListener("change", this, { signal });
     this.addEventListener("click", this, { signal });
     this.addEventListener("input", this, { signal });
+    this.addEventListener("submit", this, { signal });
     // Firefox likes to store form values across page loads...
     this.#$("#fry-quality").value = this.#fryQuality;
     this.#$("#fry-count").value = this.#fryCount;
@@ -45,20 +59,20 @@ class JpegApp extends HTMLElement {
     if (!(target instanceof HTMLElement)) {
       return;
     }
-    const { classList, id } = target;
+    const { id } = target;
+    if (type === "submit") {
+      event.preventDefault();
+      return;
+    }
     if (type === "paste") {
       /** @type {File} */
       const [file] = clipboardData.files;
       if (file && file.type.startsWith("image/")) {
         const name = String(Date.now());
         const newFile = new File([file], name);
-        this.#file = newFile;
+        this.#loadFile(newFile);
         this.#render();
       }
-      return;
-    }
-    if (type === "click" && id === "file-output") {
-      this.#$("#download-link").click();
       return;
     }
     if (type === "dragover") {
@@ -68,7 +82,7 @@ class JpegApp extends HTMLElement {
     }
     if (type === "drop") {
       event.preventDefault();
-      [this.#file] = event.dataTransfer.files;
+      this.#loadFile(event.dataTransfer.files[0]);
       this.#render();
       return;
     }
@@ -77,7 +91,7 @@ class JpegApp extends HTMLElement {
       return;
     }
     if (type === "change" && id === "file-input-real") {
-      [this.#file] = event.target.files;
+      this.#loadFile(event.target.files[0]);
       this.#render();
       return;
     }
@@ -121,25 +135,43 @@ class JpegApp extends HTMLElement {
   }
 
   /**
-   * @param image {HTMLImageElement}
+   * @param {File} file
    */
-  async #deepFry(image) {
-    let img = image;
-    const [w, h] = this.#getScaledSize(img.naturalWidth, img.naturalHeight);
-    this.#canvas.width = w;
-    this.#canvas.height = h;
-    this.#ctx.fillStyle = "white";
-    this.#ctx.fillRect(0, 0, w, h);
-    this.#ctx.drawImage(img, 0, 0, w, h);
-    const count = this.#fryCount;
-    for (let i = 0; i < count; i++) {
-      this.#ctx.drawImage(img, 0, 0, w, h);
-      const quality = this.#getFryQuality(i);
-      const dataUrl = this.#canvas.toDataURL("image/jpeg", quality);
-      img = await this.#loadImage(dataUrl);
-      await this.#sleep(0);
+  async #loadFile(file) {
+    const dataUrl = await this.#readFile(file);
+    this.#filename = file.name;
+    this.#inputImage = await this.#loadImage(dataUrl);
+    this.#render();
+  }
+
+  async #deepFry() {
+    try {
+      this.#$("#fieldset").disabled = true;
+      this.progress = 0;
+      let image = this.#inputImage;
+      const [w, h] = this.#getScaledSize(
+        image.naturalWidth,
+        image.naturalHeight
+      );
+      this.#canvas.width = w;
+      this.#canvas.height = h;
+      this.#ctx.fillStyle = "white";
+      this.#ctx.fillRect(0, 0, w, h);
+      this.#ctx.drawImage(image, 0, 0, w, h);
+      const count = this.#fryCount;
+      for (let i = 0; i < count; i++) {
+        this.progress = (i + 1) / count;
+        this.#ctx.drawImage(image, 0, 0, w, h);
+        const quality = this.#getFryQuality(i);
+        const dataUrl = this.#canvas.toDataURL("image/jpeg", quality);
+        image = await this.#loadImage(dataUrl);
+        await this.#sleep(0);
+      }
+      return image;
+    } finally {
+      this.#$("#fieldset").disabled = false;
+      this.#progress = 1;
     }
-    return this.#canvas.toDataURL("image/jpeg");
   }
 
   /**
@@ -177,27 +209,34 @@ class JpegApp extends HTMLElement {
   }
 
   async #render() {
-    if (!this.#file) {
+    if (!this.#inputImage) {
       return;
     }
-    const dataUrl = await this.#readFile(this.#file);
-    const img = await this.#loadImage(dataUrl);
-    this.#url = await this.#deepFry(img);
+    const fileInputContainer = this.#$("#file-input-container");
+    fileInputContainer.innerHTML = "";
+    fileInputContainer.append(this.#inputImage);
+    fileInputContainer.hidden = false;
+    this.#outputImage = await this.#deepFry();
     const outputArea = this.#$("#output-area");
     outputArea.hidden = false;
     const downloadLink = this.#$("#download-link");
-    downloadLink.download = `${this.#file.name}.jpg`;
-    downloadLink.href = this.#url;
-    const fileOutput = this.#$("#file-output");
-    fileOutput.src = this.#url;
-    const [w, h] = this.#getScaledSize(img.naturalWidth, img.naturalHeight);
-    fileOutput.width = w;
-    fileOutput.height = h;
+    downloadLink.download = `${this.#filename}.jpg`;
+    downloadLink.href = this.#outputImage.href;
+    const fileOutputContainer = this.#$("#file-output-container");
+    fileOutputContainer.innerHTML = "";
+    fileOutputContainer.append(this.#outputImage);
   }
 
-  /** @param {string} selector */
+  /**
+   * @param {string} selector
+   * @return {HTMLElement}
+   */
   #$(selector) {
-    return document.querySelector(selector);
+    const element = document.querySelector(selector);
+    if (!element) {
+      throw new Error(`no element found for: ${selector}`);
+    }
+    return element;
   }
 
   async #sleep(duration) {

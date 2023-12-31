@@ -22,6 +22,7 @@ body {
 }
 
 img {
+  display: block;
   width: 100%;
   max-width: 100%;
   height: auto;
@@ -89,4 +90,22 @@ jpeg-app {
 
 .file-output {
   cursor: pointer;
+}
+
+.progress-bar {
+  --size: calc(1% * var(--percent));
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  border-bottom: 1px solid var(--bit-color-fg);
+  box-shadow: inset 0 0 0 1px var(--bit-color-bg);
+  background-color: var(--bit-color-bg);
+  background-image: linear-gradient(
+    to right,
+    var(--bit-color-accent) 0 var(--size),
+    transparent var(--size)
+  );
 }

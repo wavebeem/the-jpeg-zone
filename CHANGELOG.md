@@ -3,6 +3,10 @@
 ## 2023-12-31
 
 - Updated image resolution labels to use fractions
+- Added before/after image comparison
+- Added progress bar during deep fry
+- Disabled form controls during deep fry
+- Added a favicon
 
 ## 2023-12-30
 
