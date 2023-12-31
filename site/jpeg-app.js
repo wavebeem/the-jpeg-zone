@@ -1,9 +1,12 @@
 class JpegApp extends HTMLElement {
   /** @type {number} */
-  #fryCount = 100;
+  #fryCount = 25;
 
   /** @type {number} */
-  #fryQuality = 0.01;
+  #fryQuality = 0.3;
+
+  /** @type {number} */
+  #frySize = 2 ** -3;
 
   /** @type {File | undefined} */
   #file = undefined;
@@ -27,6 +30,7 @@ class JpegApp extends HTMLElement {
     // Firefox likes to store form values across page loads...
     this.#$("#fry-quality").value = this.#fryQuality;
     this.#$("#fry-count").value = this.#fryCount;
+    this.#$("#fry-size").value = this.#frySize;
   }
 
   disconnectedCallback() {
@@ -87,6 +91,11 @@ class JpegApp extends HTMLElement {
       this.#render();
       return;
     }
+    if (type === "input" && id === "fry-size") {
+      this.#frySize = Number(target.value);
+      this.#render();
+      return;
+    }
   }
 
   #getFryQuality(i) {
@@ -95,22 +104,40 @@ class JpegApp extends HTMLElement {
   }
 
   /**
-   * @param image {Image}
+   * @param {number} height
+   * @param {number} width
+   */
+  #getScaledSize(width, height) {
+    const maxSize = this.#frySize * 1_000_000;
+    const size = width * height;
+    if (size < maxSize) {
+      return [width, height];
+    }
+    const scale2d = size / maxSize;
+    const scale1d = Math.sqrt(scale2d);
+    const w = Math.floor(width / scale1d);
+    const h = Math.floor(height / scale1d);
+    return [w, h];
+  }
+
+  /**
+   * @param image {HTMLImageElement}
    */
   async #deepFry(image) {
     let img = image;
-    this.#canvas.width = img.width;
-    this.#canvas.height = img.height;
+    const [w, h] = this.#getScaledSize(img.naturalWidth, img.naturalHeight);
+    this.#canvas.width = w;
+    this.#canvas.height = h;
     this.#ctx.fillStyle = "white";
-    this.#ctx.fillRect(0, 0, img.width, img.height);
-    this.#ctx.drawImage(img, 0, 0);
+    this.#ctx.fillRect(0, 0, w, h);
+    this.#ctx.drawImage(img, 0, 0, w, h);
     const count = this.#fryCount;
     for (let i = 0; i < count; i++) {
-      this.#ctx.drawImage(img, 0, 0);
+      this.#ctx.drawImage(img, 0, 0, w, h);
       const quality = this.#getFryQuality(i);
       const dataUrl = this.#canvas.toDataURL("image/jpeg", quality);
       img = await this.#loadImage(dataUrl);
-      this.#ctx.drawImage(img, 0, 0);
+      await this.#sleep(0);
     }
     return this.#canvas.toDataURL("image/jpeg");
   }
@@ -134,11 +161,11 @@ class JpegApp extends HTMLElement {
 
   /**
    * @param {string} url
-   * @returns {Promise<Image>}
+   * @returns {Promise<HTMLImageElement>}
    */
   async #loadImage(url) {
     return new Promise((resolve, reject) => {
-      const image = new Image();
+      const image = document.createElement("img");
       image.addEventListener("load", () => {
         resolve(image);
       });
@@ -163,11 +190,20 @@ class JpegApp extends HTMLElement {
     downloadLink.href = this.#url;
     const fileOutput = this.#$("#file-output");
     fileOutput.src = this.#url;
+    const [w, h] = this.#getScaledSize(img.naturalWidth, img.naturalHeight);
+    fileOutput.width = w;
+    fileOutput.height = h;
   }
 
   /** @param {string} selector */
   #$(selector) {
     return document.querySelector(selector);
+  }
+
+  async #sleep(duration) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, duration);
+    });
   }
 }
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2023-12-30
+
+- Added deep fry size
+  - This limits the maximum megapixel size of the image
+
 ## 2023-12-29
 
 - Added deep fry quality
