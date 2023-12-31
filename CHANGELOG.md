@@ -1,5 +1,9 @@
 # Changelog
 
+## 2023-12-31
+
+- Updated image resolution labels to use fractions
+
 ## 2023-12-30
 
 - Added deep fry size
