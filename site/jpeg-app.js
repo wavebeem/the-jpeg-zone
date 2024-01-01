@@ -65,25 +65,35 @@ class JpegApp extends HTMLElement {
       return;
     }
     if (type === "paste") {
-      /** @type {File} */
-      const [file] = clipboardData.files;
-      if (file && file.type.startsWith("image/")) {
-        const name = String(Date.now());
-        const newFile = new File([file], name);
-        this.#loadFile(newFile);
-        this.#render();
+      if (clipboardData.files.length > 0) {
+        /** @type {File} */
+        const file = clipboardData.files[0];
+        if (file && file.type.startsWith("image/")) {
+          const name = String(Date.now());
+          const newFile = new File([file], name);
+          this.#loadFile(newFile);
+          this.#render();
+        }
       }
       return;
     }
     if (type === "dragover") {
       event.preventDefault();
-      event.dataTransfer.dropEffect = "copy";
+      const items = [...event.dataTransfer.items];
+      console.log(items);
+      if (items.every((x) => x.type.startsWith("image/"))) {
+        event.dataTransfer.dropEffect = "copy";
+      } else {
+        event.dataTransfer.dropEffect = "none";
+      }
       return;
     }
     if (type === "drop") {
       event.preventDefault();
-      this.#loadFile(event.dataTransfer.files[0]);
-      this.#render();
+      if (event.dataTransfer.files.length > 0) {
+        this.#loadFile(event.dataTransfer.files[0]);
+        this.#render();
+      }
       return;
     }
     if (type === "click" && id === "file-input") {

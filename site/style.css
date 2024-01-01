@@ -15,17 +15,15 @@ body {
   font-family: system-ui, sans-serif;
 }
 
-@media (min-width: 800px) {
-  body {
-    font-size: 1.25rem;
-  }
-}
-
 img {
   display: block;
   width: 100%;
   max-width: 100%;
   height: auto;
+}
+
+fieldset {
+  margin: 0;
 }
 
 jpeg-app {
@@ -34,19 +32,20 @@ jpeg-app {
 
 .bit-auto,
 .bit-root {
-  --bit-color-bg: hsl(22 100% 95%);
-  --bit-color-fg: hsl(22 100% 30%);
-  --bit-color-shadow: hsl(22 80% 80%);
-  --bit-color-accent: hsl(202 100% 30%);
+  --bit-color-bg: #eee;
+  --bit-color-fg: #333;
+  --bit-color-shadow: #aaa;
+  --bit-color-accent: #666;
+  --bit-border-radius: 4px;
 }
 
 @media (prefers-color-scheme: dark) {
   .bit-auto,
   .bit-root {
-    --bit-color-bg: #333;
+    --bit-color-bg: #222;
     --bit-color-fg: #ccc;
-    --bit-color-shadow: #666;
-    --bit-color-accent: #0fc;
+    --bit-color-shadow: #777;
+    --bit-color-accent: #fff;
   }
 }
 
@@ -66,6 +65,18 @@ jpeg-app {
 .box {
   flex-direction: column;
   gap: 1rem;
+}
+
+.box-row {
+  flex-direction: row;
+}
+
+.box-wrap {
+  flex-wrap: wrap;
+}
+
+.box-align-start {
+  align-items: start;
 }
 
 .gap0 {
@@ -108,4 +119,10 @@ jpeg-app {
     var(--bit-color-accent) 0 var(--size),
     transparent var(--size)
   );
+}
+
+.icon {
+  max-width: 100px;
+  height: auto;
+  --bit-border-radius: 25%;
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2024-01-01
+
+- Added meta tags for link previews
+- Added an app icon
+- Changed the color scheme to match the icon
+- Fixed an issue where the main form was sized incorrectly
+
 ## 2023-12-31
 
 - Updated image resolution labels to use fractions

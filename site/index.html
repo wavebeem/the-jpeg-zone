@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>jpeg | wavebeem</title>
+    <title>the jpeg zone</title>
+    <meta name="og:image" content="https://jpeg.wavebeem.com/icon.jpg" />
+    <meta name="og:image:width" content="250" />
+    <meta name="og:image:height" content="250" />
+    <meta name="og:title" content="the jpeg zone" />
+    <meta name="og:description" content="deep fried jpeg generator" />
     <link rel="icon" sizes="16x16" href="/favicon.png" />
     <link rel="stylesheet" href="/2bit-ui.css" />
     <link rel="stylesheet" href="/style.css" />
@@ -15,9 +20,18 @@
     ></script>
   </head>
   <body class="box">
-    <div class="box gap1">
-      <h1 class="margin0">the jpeg zone</h1>
-      <p class="margin0">deep fried jpeg generator</p>
+    <div class="box box-row box-align-start box-wrap gap3">
+      <img
+        src="/icon.jpg"
+        width="250"
+        height="250"
+        alt=""
+        class="bit-box icon"
+      />
+      <div class="box gap1">
+        <h1 class="margin0">the jpeg zone</h1>
+        <p class="margin0">deep fried jpeg generator</p>
+      </div>
     </div>
     <jpeg-app class="box flex-auto">
       <div hidden id="progress-bar" class="progress-bar"></div>
@@ -102,7 +116,7 @@
               <option value="0.125">1&nbsp;&frasl;&nbsp;8 megapixels</option>
               <option value="0.25">1&nbsp;&frasl;&nbsp;4 megapixels</option>
               <option value="0.5">1&nbsp;&frasl;&nbsp;2 megapixel</option>
-              <option value="1">1 megapixel (1000&times;1000 pixels)</option>
+              <option value="1">1 megapixel</option>
               <option value="Infinity">original</option>
             </select>
           </label>
