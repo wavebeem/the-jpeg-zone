@@ -36,7 +36,7 @@ jpeg-app {
   --bit-color-fg: #333;
   --bit-color-shadow: #aaa;
   --bit-color-accent: #666;
-  --bit-border-radius: 4px;
+  --bit-border-radius: 8px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -124,5 +124,5 @@ jpeg-app {
 .icon {
   width: auto;
   height: 61px;
-  --bit-border-radius: 25%;
+  border-radius: 25%;
 }

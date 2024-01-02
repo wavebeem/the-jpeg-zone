@@ -2,6 +2,8 @@
 
 ## 2024-01-01
 
+- Upgraded 2bit-ui
+- Fixed border radius on icon
 - Added meta tags for link previews
 - Added an app icon
 - Changed the color scheme to match the icon
