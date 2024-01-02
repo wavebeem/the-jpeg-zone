@@ -11,7 +11,6 @@ body {
   max-width: 600px;
   padding: 1rem;
   margin: 0 auto;
-  min-height: 100svh;
   font-family: system-ui, sans-serif;
 }
 
@@ -36,7 +35,7 @@ jpeg-app {
   --bit-color-fg: #333;
   --bit-color-shadow: #aaa;
   --bit-color-accent: #666;
-  --bit-border-radius: 8px;
+  --bit-border-radius: 3px;
 }
 
 @media (prefers-color-scheme: dark) {
