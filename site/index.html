@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="bit-root bit-scrollbar">
+<html lang="en" class="candy-root candy-scrollbar">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,7 +10,7 @@
     <meta name="og:title" content="the jpeg zone" />
     <meta name="og:description" content="deep fried jpeg generator" />
     <link rel="icon" sizes="16x16" href="/favicon.png" />
-    <link rel="stylesheet" href="/2bit-ui.css" />
+    <link rel="stylesheet" href="/candy.css" />
     <link rel="stylesheet" href="/style.css" />
     <script type="module" src="/jpeg-app.js"></script>
     <script
@@ -26,7 +26,7 @@
         width="250"
         height="250"
         alt=""
-        class="bit-box icon"
+        class="candy-box icon"
       />
       <div class="box gap1">
         <h1 class="margin0">the jpeg zone</h1>
@@ -36,7 +36,7 @@
     <jpeg-app class="box flex-auto">
       <div hidden id="progress-bar" class="progress-bar"></div>
 
-      <div class="bit-card box">
+      <div class="candy-card box">
         <h2 class="margin0">info</h2>
         <p class="margin0">
           results will vary between browsers. try changing the settings,
@@ -44,40 +44,44 @@
         </p>
         <p class="margin0">
           &copy;
-          <a class="bit-link" href="https://www.wavebeem.com">sage fennel</a>
+          <a class="candy-link" href="https://www.wavebeem.com">sage fennel</a>
           &bull;
           <a
             href="https://github.com/wavebeem/the-jpeg-zone"
             target="github"
-            class="bit-link"
+            class="candy-link"
             >source code on github</a
           >
         </p>
       </div>
 
       <form id="form">
-        <fieldset id="fieldset" class="bit-card box">
+        <fieldset id="fieldset" class="candy-card box">
           <input hidden id="file-input-real" type="file" accept="image/*" />
           <h2 class="margin0">choose</h2>
           <div class="box gap0">
-            <button id="file-input" class="bit-button" type="button">
+            <button
+              id="file-input"
+              class="candy-button candy-primary"
+              type="button"
+            >
               choose an image
             </button>
-            <p class="margin0">
+            <div class="margin-top2">
               <i>&ndash;or&ndash;</i>
               drag &amp; drop
-            </p>
-            <p class="margin0">
+            </div>
+            <div>
               <i>&ndash;or&ndash;</i>
               copy &amp; paste
-            </p>
+            </div>
           </div>
 
-          <div hidden id="file-input-container" class="bit-box"></div>
+          <div hidden id="file-input-container" class="candy-box"></div>
 
           <label class="box gap1"
             >how many times to fry
-            <select id="fry-count" class="bit-select">
+            <select id="fry-count" class="candy-select">
               <option value="100">100</option>
               <option value="50">50</option>
               <option value="25">25</option>
@@ -93,7 +97,7 @@
 
           <label class="box gap1"
             >fry quality per step (approximate)
-            <select id="fry-quality" class="bit-select">
+            <select id="fry-quality" class="candy-select">
               <option value="0.01">1%</option>
               <option value="0.02">2%</option>
               <option value="0.03">3%</option>
@@ -114,7 +118,7 @@
 
           <label class="box gap1"
             >maximum image resolution
-            <select id="fry-size" class="bit-select">
+            <select id="fry-size" class="candy-select">
               <option value="0.0625">1&nbsp;&frasl;&nbsp;16 megapixels</option>
               <option value="0.125">1&nbsp;&frasl;&nbsp;8 megapixels</option>
               <option value="0.25">1&nbsp;&frasl;&nbsp;4 megapixels</option>
@@ -126,11 +130,11 @@
         </fieldset>
       </form>
 
-      <div id="output-area" class="box bit-card" hidden>
+      <div id="output-area" class="box candy-card" hidden>
         <h2 class="margin0">result</h2>
-        <a id="download-link" class="bit-button">download</a>
-        <div id="file-output-container" class="bit-box"></div>
-        <button id="fry-it-again" class="bit-button">fry it again</button>
+        <a id="download-link" class="candy-button candy-primary">download</a>
+        <div id="file-output-container" class="candy-box"></div>
+        <button id="fry-it-again" class="candy-button">fry it again</button>
       </div>
     </jpeg-app>
   </body>

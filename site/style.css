@@ -2,6 +2,45 @@
   box-sizing: border-box;
 }
 
+.candy-root {
+  --candy-color-background1: hsl(0 0% 100%);
+  --candy-color-background2: hsl(0 0% 98%);
+  --candy-color-background3: hsl(0 0% 92%);
+  --candy-color-background4: hsl(0 0% 88%);
+  --candy-color-text1: hsl(0 0% 5%);
+  --candy-color-text2: hsl(0 0% 25%);
+  --candy-color-border1: hsl(0 0% 40%);
+  --candy-color-border2: hsl(0 0% 60%);
+  --candy-color-border3: hsl(0 0% 70%);
+  --candy-color-accent-background1: hsl(0 0% 30%);
+  --candy-color-accent-background2: hsl(0 0% 25%);
+  --candy-color-accent-border1: hsl(0 0% 10%);
+  --candy-color-accent-text1: hsl(0 0% 100%);
+  --candy-color-shadow1: hsl(0 0% 5% / 20%);
+
+  --candy-button-padding-vertical: 1rem;
+  --candy-select-padding-vertical: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .candy-root {
+    --candy-color-background1: hsl(0 0% 10%);
+    --candy-color-background2: hsl(0 0% 20%);
+    --candy-color-background3: hsl(0 0% 17%);
+    --candy-color-background4: hsl(0 0% 14%);
+    --candy-color-text1: hsl(0 0% 90%);
+    --candy-color-text2: hsl(0 0% 70%);
+    --candy-color-border1: hsl(0 0% 55%);
+    --candy-color-border2: hsl(0 0% 26%);
+    --candy-color-border3: hsl(0 0% 22%);
+    --candy-color-accent-background1: hsl(0 0% 90%);
+    --candy-color-accent-background2: hsl(0 0% 85%);
+    --candy-color-accent-border1: hsl(0 0% 100%);
+    --candy-color-accent-text1: hsl(0 80% 5%);
+    --candy-color-shadow1: hsl(0 0% 5% / 50%);
+  }
+}
+
 html {
   padding: 0;
   margin: 0;
@@ -55,6 +94,10 @@ jpeg-app {
 
 .margin0 {
   margin: 0;
+}
+
+.margin-top2 {
+  margin-top: 0.5rem;
 }
 
 .box:where(:not([hidden])) {
@@ -124,4 +167,13 @@ jpeg-app {
   width: auto;
   height: 61px;
   border-radius: 25%;
+}
+
+.candy-button {
+  text-decoration-line: none;
+  text-align: center;
+}
+
+.candy-button.candy-primary {
+  font-size: 1.15rem;
 }
