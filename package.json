@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "description": "Make deep fried JPEG images",
   "scripts": {
+    "build": "npm run -s check",
     "check": "npx @biomejs/biome check site",
     "check:fix": "npx @biomejs/biome check --write site",
     "start": "npx serve site",
