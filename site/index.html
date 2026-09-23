@@ -1,64 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="candy-root candy-scrollbar">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>the jpeg zone</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src * data: blob:; script-src 'self';"
+    />
+    <title>THE JPEG ZONE</title>
     <meta name="og:image" content="https://jpeg.wavebeem.com/icon.jpg" />
     <meta name="og:image:width" content="250" />
     <meta name="og:image:height" content="250" />
-    <meta name="og:title" content="the jpeg zone" />
+    <meta name="og:title" content="THE JPEG ZONE" />
     <meta name="og:description" content="deep fried jpeg generator" />
     <link rel="icon" sizes="16x16" href="/favicon.png" />
-    <link rel="stylesheet" href="/candy.css" />
+    <style>
+      @import "./candy.css" layer(candy);
+    </style>
     <link rel="stylesheet" href="/style.css" />
     <script type="module" src="/jpeg-app.js"></script>
     <script
       defer
       data-domain="jpeg.wavebeem.com"
-      src="https://plausible.io/js/script.js"
+      src="/p/js/script.js"
     ></script>
   </head>
   <body class="box">
     <div class="box box-row box-align-start box-wrap gap3">
-      <img
-        src="/icon.jpg"
-        width="250"
-        height="250"
-        alt=""
-        class="candy-box icon"
-      />
-      <div class="box gap1">
-        <h1 class="margin0">the jpeg zone</h1>
-        <p class="margin0">deep fried jpeg generator</p>
-      </div>
+      <hgroup class="box gap1">
+        <h1 class="margin0 title">THE JPEG ZONE</h1>
+        <p class="margin0 subtitle">deep fried jpeg generator</p>
+      </hgroup>
     </div>
     <jpeg-app class="box flex-auto">
       <div hidden id="progress-bar" class="progress-bar"></div>
 
       <div class="candy-card box">
-        <h2 class="margin0">info</h2>
         <p class="margin0">
           results will vary between browsers. try changing the settings,
           especially when you fry an image more than once. have fun!
-        </p>
-        <p class="margin0">
-          &copy;
-          <a class="candy-link" href="https://www.wavebeem.com">sage fennel</a>
-          &bull;
-          <a
-            href="https://github.com/wavebeem/the-jpeg-zone"
-            target="github"
-            class="candy-link"
-            >source code on github</a
-          >
         </p>
       </div>
 
       <form id="form">
         <fieldset id="fieldset" class="candy-card box">
           <input hidden id="file-input-real" type="file" accept="image/*" />
-          <h2 class="margin0">choose</h2>
           <div class="box gap0">
             <button
               id="file-input"
@@ -67,14 +53,7 @@
             >
               choose an image
             </button>
-            <div class="margin-top2">
-              <i>&ndash;or&ndash;</i>
-              drag &amp; drop
-            </div>
-            <div>
-              <i>&ndash;or&ndash;</i>
-              copy &amp; paste
-            </div>
+            <small class="margin-top2">supports drag/drop and copy/paste</small>
           </div>
 
           <div hidden id="file-input-container" class="candy-box"></div>
@@ -131,11 +110,34 @@
       </form>
 
       <div id="output-area" class="box candy-card" hidden>
-        <h2 class="margin0">result</h2>
-        <a id="download-link" class="candy-button candy-primary">download</a>
+        <div class="box box-row gap2">
+          <button id="fry-it-again" class="candy-button" type="button">
+            fry it again
+          </button>
+          <a
+            id="download-link"
+            class="candy-button candy-primary flex-auto"
+            href="#download"
+            >download</a
+          >
+        </div>
+
         <div id="file-output-container" class="candy-box"></div>
-        <button id="fry-it-again" class="candy-button">fry it again</button>
       </div>
+
+      <p class="margin0">
+        &copy;
+        <a class="candy-link" href="https://www.wavebeem.com"
+          >sage fennel mock</a
+        >
+        &bull;
+        <a
+          href="https://github.com/wavebeem/the-jpeg-zone"
+          target="github"
+          class="candy-link"
+          >source code on github</a
+        >
+      </p>
     </jpeg-app>
   </body>
 </html>

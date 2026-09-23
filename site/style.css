@@ -1,8 +1,22 @@
+/* https://gwfh.mranftl.com/fonts */
+/* https://cloudconvert.com/ttf-to-woff2 */
+
+@font-face {
+  font-family: "Roboto";
+  src: url("/fonts/Roboto-VariableFont_wdth,wght.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 75% 100%;
+  font-display: swap;
+}
+
 * {
   box-sizing: border-box;
 }
 
 .candy-root {
+  --candy-card-radius: 16px;
+  --candy-shadow-outset: 0 1px var(--candy-color-shadow1);
+
   --candy-color-background1: hsl(0 0% 100%);
   --candy-color-background2: hsl(0 0% 98%);
   --candy-color-background3: hsl(0 0% 92%);
@@ -16,10 +30,12 @@
   --candy-color-accent-background2: hsl(0 0% 25%);
   --candy-color-accent-border1: hsl(0 0% 10%);
   --candy-color-accent-text1: hsl(0 0% 100%);
-  --candy-color-shadow1: hsl(0 0% 5% / 20%);
+  --candy-color-shadow1: hsl(0 0% 5% / 10%);
 
   --candy-button-padding-vertical: 1rem;
   --candy-select-padding-vertical: 1rem;
+
+  background: var(--candy-color-background3);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -48,9 +64,24 @@ html {
 
 body {
   max-width: 600px;
-  padding: 1rem;
+  padding: 2rem 0.5rem;
   margin: 0 auto;
-  font-family: system-ui, sans-serif;
+  font-family: "Roboto", system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+hgroup {
+  padding-inline: 0.5rem;
+}
+
+:is(h1, h2, h3, h4, h5, h6) {
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+:is(button, select, input, label) {
+  font-weight: 500;
+  letter-spacing: calc(1em / 32);
 }
 
 img {
@@ -66,30 +97,6 @@ fieldset {
 
 jpeg-app {
   display: block;
-}
-
-.bit-auto,
-.bit-root {
-  --bit-color-bg: #eee;
-  --bit-color-fg: #333;
-  --bit-color-shadow: #aaa;
-  --bit-color-accent: #666;
-  --bit-border-radius: 3px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .bit-auto,
-  .bit-root {
-    --bit-color-bg: #222;
-    --bit-color-fg: #ccc;
-    --bit-color-shadow: #777;
-    --bit-color-accent: #fff;
-  }
-}
-
-.bit-button {
-  text-decoration: none;
-  text-align: center;
 }
 
 .margin0 {
@@ -147,26 +154,20 @@ jpeg-app {
 
 .progress-bar {
   --size: calc(1% * var(--percent));
+  box-sizing: border-box;
   pointer-events: none;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 16px;
-  border-bottom: 1px solid var(--bit-color-fg);
-  box-shadow: inset 0 0 0 1px var(--bit-color-bg);
-  background-color: var(--bit-color-bg);
+  height: 8px;
+  border-bottom: 1px solid var(--candy-color-background1);
+  background-color: var(--candy-color-background1);
   background-image: linear-gradient(
     to right,
-    var(--bit-color-accent) 0 var(--size),
+    var(--candy-color-accent-background1) 0 var(--size),
     transparent var(--size)
   );
-}
-
-.icon {
-  width: auto;
-  height: 61px;
-  border-radius: 25%;
 }
 
 .candy-button {
@@ -176,4 +177,33 @@ jpeg-app {
 
 .candy-button.candy-primary {
   font-size: 1.15rem;
+}
+
+hgroup {
+  place-self: center;
+}
+
+.title {
+  font-stretch: condensed;
+  font-width: condensed;
+  line-height: 1;
+}
+.subtitle {
+  line-height: 1;
+  letter-spacing: calc(1em / 16);
+}
+
+.candy-select {
+  border-color: var(--candy-color-border2);
+}
+
+.candy-link {
+  text-underline-offset: calc(1em / 8);
+}
+
+.candy-card {
+  background-color: var(--candy-color-background4);
+  border-color: transparent;
+  /* border-color: var(--candy-color-border3); */
+  box-shadow: none;
 }

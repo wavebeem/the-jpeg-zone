@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "type": "module",
+  "name": "the-jpeg-zone",
+  "version": "1.0.0",
+  "description": "Make deep fried JPEG images",
+  "scripts": {
+    "check": "npx @biomejs/biome check site",
+    "check:fix": "npx @biomejs/biome check --write site",
+    "start": "npx serve site",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wavebeem/the-jpeg-zone.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wavebeem/the-jpeg-zone/issues"
+  },
+  "homepage": "https://github.com/wavebeem/the-jpeg-zone#readme",
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14"
+  }
+}

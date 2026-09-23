@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-23
+
+- Added "Roboto" web font
+- Put "fry it again" and "download" on the same line
+- Various small UI tweaks, including overrides to candy.css
+- Added analytics proxy
+
 ## 2024-01-01
 
 - Upgraded 2bit-ui

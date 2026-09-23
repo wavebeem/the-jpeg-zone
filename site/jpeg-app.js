@@ -17,7 +17,9 @@ class JpegApp extends HTMLElement {
   #filename = "the-jpeg-zone.jpg";
 
   #canvas = document.createElement("canvas");
-  #ctx = this.#canvas.getContext("2d");
+  #ctx = this.#canvas.getContext("2d", {
+    alpha: false,
+  });
 
   get progress() {
     return this.#progress;
@@ -68,7 +70,7 @@ class JpegApp extends HTMLElement {
       if (clipboardData.files.length > 0) {
         /** @type {File} */
         const file = clipboardData.files[0];
-        if (file && file.type.startsWith("image/")) {
+        if (file?.type.startsWith("image/")) {
           const name = String(Date.now());
           const newFile = new File([file], name);
           this.#loadFile(newFile);
@@ -166,7 +168,7 @@ class JpegApp extends HTMLElement {
       let image = this.#inputImage;
       const [w, h] = this.#getScaledSize(
         image.naturalWidth,
-        image.naturalHeight
+        image.naturalHeight,
       );
       this.#canvas.width = w;
       this.#canvas.height = h;

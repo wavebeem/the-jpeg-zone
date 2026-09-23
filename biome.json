@@ -1,0 +1,17 @@
+{
+  "$schema": "https://biomejs.dev",
+  "files": {
+    "includes": ["site/**/*.{html,css,js}", "!site/**/candy.css"],
+    "ignoreUnknown": true
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "html": {
+    "formatter": {
+      "enabled": true
+    }
+  }
+}

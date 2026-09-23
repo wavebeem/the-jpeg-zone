@@ -1,0 +1,24 @@
+[[headers]]
+for = "/*"
+[headers.values]
+Content-Security-Policy = """\
+default-src 'self'; \
+img-src 'self'; \
+script-src 'self'; \
+style-src 'self' 'unsafe-inline'; \
+frame-ancestors 'self'; \
+"""
+
+[[redirects]]
+from = "/p/js/script.js"
+to = "https://plausible.io/js/script.js"
+status = 200
+
+[[redirects]]
+from = "/p/api/event"
+to = "https://plausible.io/api/event"
+status = 200
+
+[build]
+publish = "site"
+command = "npm run build"
