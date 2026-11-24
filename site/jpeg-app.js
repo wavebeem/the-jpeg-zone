@@ -7,11 +7,8 @@ class JpegApp extends HTMLElement {
 
   #progress = 0;
 
-  /** @type {HTMLImageElement | undefined} */
-  #inputImage = undefined;
-
-  /** @type {HTMLImageElement | undefined} */
-  #outputImage = undefined;
+  /** @type {ImageBitmap | undefined} */
+  #bitmap;
 
   /** @type {string} */
   #filename = "the-jpeg-zone.jpg";
@@ -19,6 +16,7 @@ class JpegApp extends HTMLElement {
   #canvas = document.createElement("canvas");
   #ctx = this.#canvas.getContext("2d", {
     alpha: false,
+    colorSpace: "srgb",
   });
 
   get progress() {
@@ -155,9 +153,11 @@ class JpegApp extends HTMLElement {
    * @param {File} file
    */
   async #loadFile(file) {
-    const dataUrl = await this.#readFile(file);
+    const bitmap = await createImageBitmap(file, {
+      colorSpaceConversion: "none",
+    });
     this.#filename = file.name;
-    this.#inputImage = await this.#loadImage(dataUrl);
+    // this.#inputImage = await this.#loadImage(dataUrl);
     this.#render();
   }
 
@@ -181,7 +181,7 @@ class JpegApp extends HTMLElement {
         this.#ctx.drawImage(image, 0, 0, w, h);
         const quality = this.#getFryQuality(i);
         const dataUrl = this.#canvas.toDataURL("image/jpeg", quality);
-        image = await this.#loadImage(dataUrl);
+        // image = await this.#loadImage(dataUrl);
         await this.#sleep(0);
       }
       return image;
@@ -191,57 +191,19 @@ class JpegApp extends HTMLElement {
     }
   }
 
-  /**
-   * @param {File} file
-   * @returns {Promise<string>}
-   */
-  async #readFile(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        resolve(reader.result);
-      });
-      reader.addEventListener("error", () => {
-        reject(new Error(`couldn't read file: ${file.name}`));
-      });
-      reader.readAsDataURL(file);
-    });
-  }
-
-  /**
-   * @param {string} url
-   * @returns {Promise<HTMLImageElement>}
-   */
-  async #loadImage(url) {
-    return new Promise((resolve, reject) => {
-      const image = document.createElement("img");
-      image.addEventListener("load", () => {
-        resolve(image);
-      });
-      image.addEventListener("error", () => {
-        reject(new Error(`couldn't load image: ${url}`));
-      });
-      image.src = url;
-    });
-  }
-
   async #render() {
     if (!this.#inputImage) {
       return;
     }
-    const fileInputContainer = this.#$("#file-input-container");
-    fileInputContainer.innerHTML = "";
-    fileInputContainer.append(this.#inputImage);
-    fileInputContainer.hidden = false;
-    this.#outputImage = await this.#deepFry();
+    const fileInput = this.#$("#file-input");
+    // TODO: draw #bitmap to fileInput
+    // this.#outputImage = await this.#deepFry();
     const outputArea = this.#$("#output-area");
     outputArea.hidden = false;
     const downloadLink = this.#$("#download-link");
     downloadLink.download = `${this.#filename}.jpg`;
-    downloadLink.href = this.#outputImage.src;
     const fileOutputContainer = this.#$("#file-output-container");
-    fileOutputContainer.innerHTML = "";
-    fileOutputContainer.append(this.#outputImage);
+    fileOutputContainer.replaceChildren(this.#canvas);
   }
 
   /**
