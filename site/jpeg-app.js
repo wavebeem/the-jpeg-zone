@@ -1,23 +1,14 @@
 class JpegApp extends HTMLElement {
   #fryCount = 25;
-
   #fryQuality = 0.3;
-
   #frySize = 2 ** -3;
-
   #progress = 0;
-
+  /** @type {Blob | undefined} */
+  #blob;
   /** @type {ImageBitmap | undefined} */
   #bitmap;
-
   /** @type {string} */
   #filename = "the-jpeg-zone.jpg";
-
-  #canvas = document.createElement("canvas");
-  #ctx = this.#canvas.getContext("2d", {
-    alpha: false,
-    colorSpace: "srgb",
-  });
 
   get progress() {
     return this.#progress;
@@ -28,6 +19,8 @@ class JpegApp extends HTMLElement {
     const element = this.#$("#progress-bar");
     element.style.setProperty("--percent", (value * 100).toFixed(2));
     element.hidden = value >= 1;
+    const canvasOutput = this.#$("#canvas-output");
+    canvasOutput.dataset.loading = String(value >= 1);
   }
 
   connectedCallback() {
@@ -54,7 +47,7 @@ class JpegApp extends HTMLElement {
   /**
    * @param event {Event}
    */
-  handleEvent(event) {
+  async handleEvent(event) {
     const { type, target, clipboardData } = event;
     if (!(target instanceof HTMLElement)) {
       return;
@@ -65,13 +58,14 @@ class JpegApp extends HTMLElement {
       return;
     }
     if (type === "paste") {
+      console.log("Pastey??");
       if (clipboardData.files.length > 0) {
         /** @type {File} */
         const file = clipboardData.files[0];
         if (file?.type.startsWith("image/")) {
           const name = String(Date.now());
           const newFile = new File([file], name);
-          this.#loadFile(newFile);
+          await this.#loadFile(newFile);
           this.#render();
         }
       }
@@ -91,7 +85,7 @@ class JpegApp extends HTMLElement {
     if (type === "drop") {
       event.preventDefault();
       if (event.dataTransfer.files.length > 0) {
-        this.#loadFile(event.dataTransfer.files[0]);
+        await this.#loadFile(event.dataTransfer.files[0]);
         this.#render();
       }
       return;
@@ -101,12 +95,12 @@ class JpegApp extends HTMLElement {
       return;
     }
     if (type === "click" && id === "fry-it-again") {
-      this.#inputImage = this.#outputImage;
+      // this.#inputImage = this.#outputImage;
       this.#render();
       return;
     }
     if (type === "change" && id === "file-input-real") {
-      this.#loadFile(event.target.files[0]);
+      await this.#loadFile(event.target.files[0]);
       this.#render();
       return;
     }
@@ -153,38 +147,52 @@ class JpegApp extends HTMLElement {
    * @param {File} file
    */
   async #loadFile(file) {
-    const bitmap = await createImageBitmap(file, {
+    console.trace();
+    this.#filename = file.name;
+    await this.#loadBlob(file);
+  }
+
+  async #loadBlob(blob) {
+    this.#blob = blob;
+    // Avoid memory leaks...
+    // if (this.#bitmap) {
+    //   this.#bitmap.close();
+    // }
+    this.#bitmap = await createImageBitmap(blob, {
       colorSpaceConversion: "none",
     });
-    this.#filename = file.name;
-    // this.#inputImage = await this.#loadImage(dataUrl);
-    this.#render();
   }
 
   async #deepFry() {
     try {
       this.#$("#fieldset").disabled = true;
+      const canvas = this.#$("#canvas-output");
+      const ctx = canvas.getContext("2d", {
+        alpha: false,
+        colorSpace: "srgb",
+      });
       this.progress = 0;
-      let image = this.#inputImage;
+      // let image = this.#inputImage;
       const [w, h] = this.#getScaledSize(
-        image.naturalWidth,
-        image.naturalHeight,
+        this.#bitmap.width,
+        this.#bitmap.height,
       );
-      this.#canvas.width = w;
-      this.#canvas.height = h;
-      this.#ctx.fillStyle = "white";
-      this.#ctx.fillRect(0, 0, w, h);
-      this.#ctx.drawImage(image, 0, 0, w, h);
+      canvas.width = w;
+      canvas.height = h;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(this.#bitmap, 0, 0, w, h);
       const count = this.#fryCount;
       for (let i = 0; i < count; i++) {
         this.progress = (i + 1) / count;
-        this.#ctx.drawImage(image, 0, 0, w, h);
+        ctx.drawImage(this.#bitmap, 0, 0, w, h);
         const quality = this.#getFryQuality(i);
-        const dataUrl = this.#canvas.toDataURL("image/jpeg", quality);
-        // image = await this.#loadImage(dataUrl);
+        const blob = await new Promise((resolve) => {
+          canvas.toBlob(resolve, "image/jpeg", quality);
+        });
+        await this.#loadBlob(blob);
         await this.#sleep(0);
       }
-      return image;
     } finally {
       this.#$("#fieldset").disabled = false;
       this.#progress = 1;
@@ -192,18 +200,21 @@ class JpegApp extends HTMLElement {
   }
 
   async #render() {
-    if (!this.#inputImage) {
+    if (!this.#bitmap) {
       return;
     }
-    const fileInput = this.#$("#file-input");
+    this.#deepFry();
+    const canvasOutput = this.#$("#canvas-output");
     // TODO: draw #bitmap to fileInput
     // this.#outputImage = await this.#deepFry();
     const outputArea = this.#$("#output-area");
     outputArea.hidden = false;
     const downloadLink = this.#$("#download-link");
     downloadLink.download = `${this.#filename}.jpg`;
-    const fileOutputContainer = this.#$("#file-output-container");
-    fileOutputContainer.replaceChildren(this.#canvas);
+    downloadLink.href = URL.createObjectURL(this.#blob);
+    // TODO: Set the downloadLink src to a data URL of the output canvas...
+    // const fileOutputContainer = this.#$("#file-output-container");
+    // fileOutputContainer.replaceChildren(this.#canvas);
   }
 
   /**
