@@ -3,12 +3,13 @@ class JpegApp extends HTMLElement {
   #fryQuality = 0.3;
   #frySize = 2 ** -3;
   #progress = 0;
+  /** @type {File | undefined} */
+  #file;
   /** @type {Blob | undefined} */
   #blob;
   /** @type {ImageBitmap | undefined} */
   #bitmap;
-  /** @type {string} */
-  #filename = "the-jpeg-zone.jpg";
+  #downloadLink = document.createElement("a");
 
   get progress() {
     return this.#progress;
@@ -20,7 +21,8 @@ class JpegApp extends HTMLElement {
     element.style.setProperty("--percent", (value * 100).toFixed(2));
     element.hidden = value >= 1;
     const canvasOutput = this.#$("#canvas-output");
-    canvasOutput.dataset.loading = String(value >= 1);
+    canvasOutput.dataset.loading = String(value < 1);
+    this.#$("#output-form fieldset").disabled = value < 1;
   }
 
   connectedCallback() {
@@ -38,6 +40,8 @@ class JpegApp extends HTMLElement {
     this.#$("#fry-quality").value = this.#fryQuality;
     this.#$("#fry-count").value = this.#fryCount;
     this.#$("#fry-size").value = this.#frySize;
+    this.#downloadLink.hidden = true;
+    // this.append(this.#downloadLink);
   }
 
   disconnectedCallback() {
@@ -74,7 +78,6 @@ class JpegApp extends HTMLElement {
     if (type === "dragover") {
       event.preventDefault();
       const items = [...event.dataTransfer.items];
-      console.log(items);
       if (items.every((x) => x.type.startsWith("image/"))) {
         event.dataTransfer.dropEffect = "copy";
       } else {
@@ -84,10 +87,16 @@ class JpegApp extends HTMLElement {
     }
     if (type === "drop") {
       event.preventDefault();
-      if (event.dataTransfer.files.length > 0) {
-        await this.#loadFile(event.dataTransfer.files[0]);
+      /** @type {File} */
+      const file = event.dataTransfer.files[0];
+      if (file?.type.startsWith("image/")) {
+        await this.#loadFile(file);
         this.#render();
       }
+      return;
+    }
+    if (type === "click" && id === "download-button") {
+      this.#downloadLink.click();
       return;
     }
     if (type === "click" && id === "file-input") {
@@ -95,7 +104,7 @@ class JpegApp extends HTMLElement {
       return;
     }
     if (type === "click" && id === "fry-it-again") {
-      // this.#inputImage = this.#outputImage;
+      await this.#loadFile(new File([this.#blob], this.#file.name));
       this.#render();
       return;
     }
@@ -105,16 +114,19 @@ class JpegApp extends HTMLElement {
       return;
     }
     if (type === "input" && id === "fry-count") {
+      await this.#loadFile(this.#file);
       this.#fryCount = Number(target.value);
       this.#render();
       return;
     }
     if (type === "input" && id === "fry-quality") {
+      await this.#loadFile(this.#file);
       this.#fryQuality = Number(target.value);
       this.#render();
       return;
     }
     if (type === "input" && id === "fry-size") {
+      await this.#loadFile(this.#file);
       this.#frySize = Number(target.value);
       this.#render();
       return;
@@ -148,19 +160,19 @@ class JpegApp extends HTMLElement {
    */
   async #loadFile(file) {
     console.trace();
-    this.#filename = file.name;
+    this.#file = file;
     await this.#loadBlob(file);
   }
 
   async #loadBlob(blob) {
     this.#blob = blob;
-    // Avoid memory leaks...
-    // if (this.#bitmap) {
-    //   this.#bitmap.close();
-    // }
+    const oldBitmap = this.#bitmap;
     this.#bitmap = await createImageBitmap(blob, {
       colorSpaceConversion: "none",
     });
+    if (this.#bitmap !== oldBitmap && oldBitmap) {
+      oldBitmap.close();
+    }
   }
 
   async #deepFry() {
@@ -172,7 +184,6 @@ class JpegApp extends HTMLElement {
         colorSpace: "srgb",
       });
       this.progress = 0;
-      // let image = this.#inputImage;
       const [w, h] = this.#getScaledSize(
         this.#bitmap.width,
         this.#bitmap.height,
@@ -199,19 +210,37 @@ class JpegApp extends HTMLElement {
     }
   }
 
+  async #drawInput() {
+    const canvas = this.#$("#canvas-input");
+    canvas.hidden = false;
+    const ctx = canvas.getContext("2d", {
+      alpha: false,
+      colorSpace: "srgb",
+    });
+    const [w, h] = this.#getScaledSize(this.#bitmap.width, this.#bitmap.height);
+    canvas.width = w;
+    canvas.height = h;
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(this.#bitmap, 0, 0, w, h);
+  }
+
   async #render() {
     if (!this.#bitmap) {
       return;
     }
-    this.#deepFry();
-    const canvasOutput = this.#$("#canvas-output");
+    await this.#drawInput();
     // TODO: draw #bitmap to fileInput
+    await this.#deepFry();
     // this.#outputImage = await this.#deepFry();
     const outputArea = this.#$("#output-area");
     outputArea.hidden = false;
-    const downloadLink = this.#$("#download-link");
-    downloadLink.download = `${this.#filename}.jpg`;
-    downloadLink.href = URL.createObjectURL(this.#blob);
+    this.#downloadLink.download = `${this.#file.name}.jpg`;
+    if (this.#downloadLink.href) {
+      URL.revokeObjectURL(this.#downloadLink.href);
+    }
+    this.#downloadLink.href = URL.createObjectURL(this.#blob);
+    this.#$("#output-form fieldset").disabled = false;
     // TODO: Set the downloadLink src to a data URL of the output canvas...
     // const fileOutputContainer = this.#$("#file-output-container");
     // fileOutputContainer.replaceChildren(this.#canvas);
