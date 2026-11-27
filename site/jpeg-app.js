@@ -230,20 +230,13 @@ class JpegApp extends HTMLElement {
       return;
     }
     await this.#drawInput();
-    // TODO: draw #bitmap to fileInput
     await this.#deepFry();
-    // this.#outputImage = await this.#deepFry();
-    const outputArea = this.#$("#output-area");
-    outputArea.hidden = false;
     this.#downloadLink.download = `${this.#file.name}.jpg`;
     if (this.#downloadLink.href) {
       URL.revokeObjectURL(this.#downloadLink.href);
     }
     this.#downloadLink.href = URL.createObjectURL(this.#blob);
     this.#$("#output-form fieldset").disabled = false;
-    // TODO: Set the downloadLink src to a data URL of the output canvas...
-    // const fileOutputContainer = this.#$("#file-output-container");
-    // fileOutputContainer.replaceChildren(this.#canvas);
   }
 
   /**

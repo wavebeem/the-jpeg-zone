@@ -218,12 +218,19 @@ jpeg-app {
   text-align: center;
 }
 
-.candy-button.candy-primary {
-  font-size: 1.15rem;
+.candy-button {
+  font-size: 1.25rem;
 }
 
 hgroup {
   place-self: center;
+}
+
+footer {
+  font-weight: 500;
+  font-size: 1.15rem;
+
+  padding-inline: 0.5rem;
 }
 
 .title {
