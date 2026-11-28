@@ -13,7 +13,7 @@
     <meta name="og:image:height" content="250">
     <meta name="og:title" content="THE JPEG ZONE">
     <meta name="og:description" content="deep fried jpeg generator">
-    <link rel="icon" sizes="16x16" href="/favicon.png">
+    <link rel="icon" sizes="16x16" href="/favicon.png?d=2026-11-24">
     <style>
     @import "./candy.css" layer(candy);
     </style>
@@ -33,7 +33,7 @@
         <p class="margin0 subtitle">deep fried jpeg generator</p>
       </hgroup>
     </div>
-    <jpeg-app class="box flex-auto">
+    <jpeg-app>
       <div hidden id="progress-bar" class="progress-bar"></div>
 
       <div class="candy-card box">
@@ -43,102 +43,118 @@
         </p>
       </div>
 
-      <form id="form">
-        <fieldset id="fieldset" class="candy-card box">
-          <input hidden id="file-input-real" type="file" accept="image/*">
-          <div class="box gap0">
-            <button
-              id="file-input"
-              class="candy-button candy-primary"
-              type="button"
-            >
-              choose an image
-            </button>
-            <small class="margin-top2">supports drag/drop and copy/paste</small>
-          </div>
-
-          <div hidden id="file-input-container" class="candy-box"></div>
-
-          <label class="box gap1"
-            >how many times to fry
-            <select id="fry-count" class="candy-select">
-              <option value="100">100</option>
-              <option value="50">50</option>
-              <option value="25">25</option>
-              <option value="10">10</option>
-              <option value="5">5</option>
-              <option value="4">4</option>
-              <option value="3">3</option>
-              <option value="2">2</option>
-              <option value="1">1</option>
-              <option value="0">0</option>
-            </select>
-          </label>
-
-          <label class="box gap1"
-            >fry quality per step (approximate)
-            <select id="fry-quality" class="candy-select">
-              <option value="0.01">1%</option>
-              <option value="0.02">2%</option>
-              <option value="0.03">3%</option>
-              <option value="0.04">4%</option>
-              <option value="0.05">5%</option>
-              <option value="0.1">10%</option>
-              <option value="0.2">20%</option>
-              <option value="0.3">30%</option>
-              <option value="0.4">40%</option>
-              <option value="0.5">50%</option>
-              <option value="0.6">60%</option>
-              <option value="0.7">70%</option>
-              <option value="0.8">80%</option>
-              <option value="0.9">90%</option>
-              <option value="1">100%</option>
-            </select>
-          </label>
-
-          <label class="box gap1"
-            >maximum image resolution
-            <select id="fry-size" class="candy-select">
-              <option value="0.0625">1&nbsp;&frasl;&nbsp;16 megapixels</option>
-              <option value="0.125">1&nbsp;&frasl;&nbsp;8 megapixels</option>
-              <option value="0.25">1&nbsp;&frasl;&nbsp;4 megapixels</option>
-              <option value="0.5">1&nbsp;&frasl;&nbsp;2 megapixel</option>
-              <option value="1">1 megapixel</option>
-              <option value="Infinity">original</option>
-            </select>
-          </label>
-        </fieldset>
-      </form>
-
-      <div id="output-area" class="box candy-card" hidden>
-        <div class="box box-row gap2">
-          <button id="fry-it-again" class="candy-button" type="button">
-            fry it again
-          </button>
-          <a
-            id="download-link"
-            class="candy-button candy-primary flex-auto"
-            href="#download"
-            >download</a
-          >
-        </div>
-
-        <div id="file-output-container" class="candy-box"></div>
+      <div class="candy-card" id="input-area">
+        <form id="input-form">
+          <fieldset id="fieldset" class="box">
+            <input hidden id="file-input-real" type="file" accept="image/*">
+            <div class="box gap0">
+              <button id="file-input" class="candy-button" type="button">
+                choose an image
+              </button>
+              <small class="margin-top2 text-center"
+                >supports drag/drop and copy/paste</small
+              >
+            </div>
+            <img hidden id="image-input" class="candy-box" alt="">
+            <label class="box gap1"
+              >fry count
+              <select id="fry-count" class="candy-select">
+                <optgroup label="only carbon now">
+                  <option value="100">100</option>
+                  <option value="50">50</option>
+                </optgroup>
+                <optgroup label="double fried">
+                  <option value="25">25</option>
+                  <option value="10">10</option>
+                </optgroup>
+                <optgroup label="deep fried">
+                  <option value="5">5</option>
+                  <option value="4">4</option>
+                  <option value="3">3</option>
+                </optgroup>
+                <optgroup label="air fryer">
+                  <option value="2">2</option>
+                  <option value="1">1</option>
+                  <option value="0">0</option>
+                </optgroup>
+              </select>
+            </label>
+            <label class="box gap1"
+              >fry quality
+              <select id="fry-quality" class="candy-select">
+                <optgroup label="only carbon now">
+                  <option value="0.01">1%</option>
+                  <option value="0.02">2%</option>
+                  <option value="0.03">3%</option>
+                  <option value="0.04">4%</option>
+                  <option value="0.05">5%</option>
+                </optgroup>
+                <optgroup label="double fried">
+                  <option value="0.1">10%</option>
+                  <option value="0.2">20%</option>
+                  <option value="0.3">30%</option>
+                </optgroup>
+                <optgroup label="deep fried">
+                  <option value="0.4">40%</option>
+                  <option value="0.5">50%</option>
+                  <option value="0.6">60%</option>
+                  <option value="0.7">70%</option>
+                </optgroup>
+                <optgroup label="air fryer">
+                  <option value="0.8">80%</option>
+                  <option value="0.9">90%</option>
+                  <option value="1">100%</option>
+                </optgroup>
+              </select>
+            </label>
+            <label class="box gap1"
+              >resize (approx.)
+              <select id="fry-size" class="candy-select">
+                <option value="0.0625">250&nbsp;&times;&nbsp;250</option>
+                <option value="0.125">350&nbsp;&times;&nbsp;350</option>
+                <option value="0.25">500&nbsp;&times;&nbsp;500</option>
+                <option value="0.5">700&nbsp;&times;&nbsp;700</option>
+                <option value="1">1000&nbsp;&times;&nbsp;1000</option>
+                <option value="Infinity">original</option>
+              </select>
+            </label>
+          </fieldset>
+        </form>
       </div>
 
-      <p class="margin0">
-        &copy;
-        <a class="candy-link" href="https://www.wavebeem.com"
-          >sage fennel mock</a
-        >
-        &bull;
-        <a
-          href="https://github.com/wavebeem/the-jpeg-zone"
-          target="github"
-          class="candy-link"
-          >source code on github</a
-        >
-      </p>
+      <div id="output-area" class="box candy-card">
+        <form id="output-form">
+          <fieldset disabled>
+            <div class="grid2 gap2">
+              <button id="fry-it-again" class="candy-button" type="button">
+                fry it again
+              </button>
+              <button
+                type="button"
+                id="download-button"
+                class="candy-button candy-primary flex-auto"
+              >
+                download
+              </button>
+            </div>
+            <small class="margin-top-2 text-center"
+              >try changing the settings when frying again</small
+            >
+            <canvas id="canvas-output" class="candy-box canvas-output"></canvas>
+          </fieldset>
+        </form>
+      </div>
+
+      <footer>
+        <p class="margin0">
+          &copy;
+          <a class="candy-link" href="https://www.wavebeem.com">wavebeem</a>
+          <span class="text-heart" aria-hidden="true">&hearts;</span>
+          <a href="https://github.com/wavebeem/the-jpeg-zone" class="candy-link"
+            >view source</a
+          >
+        </p>
+      </footer>
     </jpeg-app>
   </body>
 </html>

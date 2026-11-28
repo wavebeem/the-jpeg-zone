@@ -1,25 +1,19 @@
 class JpegApp extends HTMLElement {
   #fryCount = 25;
-
   #fryQuality = 0.3;
-
   #frySize = 2 ** -3;
-
   #progress = 0;
-
-  /** @type {HTMLImageElement | undefined} */
-  #inputImage = undefined;
-
-  /** @type {HTMLImageElement | undefined} */
-  #outputImage = undefined;
-
-  /** @type {string} */
-  #filename = "the-jpeg-zone.jpg";
-
-  #canvas = document.createElement("canvas");
-  #ctx = this.#canvas.getContext("2d", {
-    alpha: false,
-  });
+  /** @type {File | undefined} */
+  #file;
+  /** @type {Blob | undefined} */
+  #blob;
+  /** @type {ImageBitmap | undefined} */
+  #bitmap;
+  #downloadLink = document.createElement("a");
+  #eventController = new AbortController();
+  #processingController = new AbortController();
+  /** @type {Promise<void>} */
+  #workPromise = Promise.resolve();
 
   get progress() {
     return this.#progress;
@@ -30,11 +24,13 @@ class JpegApp extends HTMLElement {
     const element = this.#$("#progress-bar");
     element.style.setProperty("--percent", (value * 100).toFixed(2));
     element.hidden = value >= 1;
+    const canvasOutput = this.#$("#canvas-output");
+    canvasOutput.dataset.loading = String(value < 1);
   }
 
   connectedCallback() {
-    this.abortController = new AbortController();
-    const { signal } = this.abortController;
+    this.#eventController = new AbortController();
+    const { signal } = this.#eventController;
     // Some events are global
     addEventListener("dragover", this, { signal });
     addEventListener("drop", this, { signal });
@@ -47,16 +43,26 @@ class JpegApp extends HTMLElement {
     this.#$("#fry-quality").value = this.#fryQuality;
     this.#$("#fry-count").value = this.#fryCount;
     this.#$("#fry-size").value = this.#frySize;
+    this.#downloadLink.hidden = true;
   }
 
   disconnectedCallback() {
-    this.abortController.abort();
+    this.#eventController?.abort();
+    this.#processingController?.abort();
+    this.#bitmap?.close();
+    const img = this.querySelector("#image-input");
+    if (img?.src) {
+      URL.revokeObjectURL(img.src);
+    }
+    if (this.#downloadLink.href) {
+      URL.revokeObjectURL(this.#downloadLink.href);
+    }
   }
 
   /**
-   * @param event {Event}
+   * @param {Event} event
    */
-  handleEvent(event) {
+  async handleEvent(event) {
     const { type, target, clipboardData } = event;
     if (!(target instanceof HTMLElement)) {
       return;
@@ -73,8 +79,10 @@ class JpegApp extends HTMLElement {
         if (file?.type.startsWith("image/")) {
           const name = String(Date.now());
           const newFile = new File([file], name);
-          this.#loadFile(newFile);
-          this.#render();
+          this.#queueTask(async (signal) => {
+            await this.#loadFile(newFile);
+            await this.#render(signal);
+          });
         }
       }
       return;
@@ -82,7 +90,6 @@ class JpegApp extends HTMLElement {
     if (type === "dragover") {
       event.preventDefault();
       const items = [...event.dataTransfer.items];
-      console.log(items);
       if (items.every((x) => x.type.startsWith("image/"))) {
         event.dataTransfer.dropEffect = "copy";
       } else {
@@ -92,10 +99,18 @@ class JpegApp extends HTMLElement {
     }
     if (type === "drop") {
       event.preventDefault();
-      if (event.dataTransfer.files.length > 0) {
-        this.#loadFile(event.dataTransfer.files[0]);
-        this.#render();
+      /** @type {File} */
+      const file = event.dataTransfer.files[0];
+      if (file?.type.startsWith("image/")) {
+        this.#queueTask(async (signal) => {
+          await this.#loadFile(file);
+          await this.#render(signal);
+        });
       }
+      return;
+    }
+    if (type === "click" && id === "download-button") {
+      this.#downloadLink.click();
       return;
     }
     if (type === "click" && id === "file-input") {
@@ -103,35 +118,76 @@ class JpegApp extends HTMLElement {
       return;
     }
     if (type === "click" && id === "fry-it-again") {
-      this.#inputImage = this.#outputImage;
-      this.#render();
-      return;
+      if (!this.#file) {
+        return;
+      }
+      return this.#queueTask(async (signal) => {
+        await this.#loadFile(new File([this.#blob], this.#file.name));
+        await this.#render(signal);
+      });
     }
     if (type === "change" && id === "file-input-real") {
-      this.#loadFile(event.target.files[0]);
-      this.#render();
-      return;
+      const file = event.target.files[0];
+      event.target.value = "";
+      if (!file) {
+        return;
+      }
+      return this.#queueTask(async (signal) => {
+        await this.#loadFile(file);
+        await this.#render(signal);
+      });
     }
     if (type === "input" && id === "fry-count") {
       this.#fryCount = Number(target.value);
-      this.#render();
-      return;
+      if (!this.#file) return;
+      return this.#queueTask(async (signal) => {
+        await this.#loadFile(this.#file);
+        await this.#render(signal);
+      });
     }
     if (type === "input" && id === "fry-quality") {
       this.#fryQuality = Number(target.value);
-      this.#render();
-      return;
+      if (!this.#file) return;
+      return this.#queueTask(async (signal) => {
+        await this.#loadFile(this.#file);
+        await this.#render(signal);
+      });
     }
     if (type === "input" && id === "fry-size") {
       this.#frySize = Number(target.value);
-      this.#render();
-      return;
+      if (!this.#file) return;
+      return this.#queueTask(async (signal) => {
+        await this.#loadFile(this.#file);
+        await this.#render(signal);
+      });
     }
+  }
+
+  /**
+   * @param {(signal: AbortSignal) => Promise<void>} fn
+   */
+  async #queueTask(fn) {
+    this.#processingController?.abort();
+    const controller = new AbortController();
+    this.#processingController = controller;
+    this.#workPromise = this.#workPromise.then(async () => {
+      // Skip immediately if another task already superseded us before we even started!
+      if (controller.signal.aborted) {
+        return;
+      }
+      try {
+        await fn(controller.signal);
+      } catch (err) {
+        if (err?.name !== "AbortError") {
+          console.error(err);
+        }
+      }
+    });
   }
 
   #getFryQuality(i) {
     const base = this.#fryQuality * 100;
-    return (base + ((i * 7) % 10)) / 100;
+    return Math.min(1, (base + ((i * 7) % 10)) / 100);
   }
 
   /**
@@ -146,8 +202,8 @@ class JpegApp extends HTMLElement {
     }
     const scale2d = size / maxSize;
     const scale1d = Math.sqrt(scale2d);
-    const w = Math.floor(width / scale1d);
-    const h = Math.floor(height / scale1d);
+    const w = Math.max(1, Math.floor(width / scale1d));
+    const h = Math.max(1, Math.floor(height / scale1d));
     return [w, h];
   }
 
@@ -155,93 +211,86 @@ class JpegApp extends HTMLElement {
    * @param {File} file
    */
   async #loadFile(file) {
-    const dataUrl = await this.#readFile(file);
-    this.#filename = file.name;
-    this.#inputImage = await this.#loadImage(dataUrl);
-    this.#render();
-  }
-
-  async #deepFry() {
-    try {
-      this.#$("#fieldset").disabled = true;
-      this.progress = 0;
-      let image = this.#inputImage;
-      const [w, h] = this.#getScaledSize(
-        image.naturalWidth,
-        image.naturalHeight,
-      );
-      this.#canvas.width = w;
-      this.#canvas.height = h;
-      this.#ctx.fillStyle = "white";
-      this.#ctx.fillRect(0, 0, w, h);
-      this.#ctx.drawImage(image, 0, 0, w, h);
-      const count = this.#fryCount;
-      for (let i = 0; i < count; i++) {
-        this.progress = (i + 1) / count;
-        this.#ctx.drawImage(image, 0, 0, w, h);
-        const quality = this.#getFryQuality(i);
-        const dataUrl = this.#canvas.toDataURL("image/jpeg", quality);
-        image = await this.#loadImage(dataUrl);
-        await this.#sleep(0);
-      }
-      return image;
-    } finally {
-      this.#$("#fieldset").disabled = false;
-      this.#progress = 1;
-    }
-  }
-
-  /**
-   * @param {File} file
-   * @returns {Promise<string>}
-   */
-  async #readFile(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        resolve(reader.result);
-      });
-      reader.addEventListener("error", () => {
-        reject(new Error(`couldn't read file: ${file.name}`));
-      });
-      reader.readAsDataURL(file);
-    });
-  }
-
-  /**
-   * @param {string} url
-   * @returns {Promise<HTMLImageElement>}
-   */
-  async #loadImage(url) {
-    return new Promise((resolve, reject) => {
-      const image = document.createElement("img");
-      image.addEventListener("load", () => {
-        resolve(image);
-      });
-      image.addEventListener("error", () => {
-        reject(new Error(`couldn't load image: ${url}`));
-      });
-      image.src = url;
-    });
-  }
-
-  async #render() {
-    if (!this.#inputImage) {
+    if (!file) {
       return;
     }
-    const fileInputContainer = this.#$("#file-input-container");
-    fileInputContainer.innerHTML = "";
-    fileInputContainer.append(this.#inputImage);
-    fileInputContainer.hidden = false;
-    this.#outputImage = await this.#deepFry();
-    const outputArea = this.#$("#output-area");
-    outputArea.hidden = false;
-    const downloadLink = this.#$("#download-link");
-    downloadLink.download = `${this.#filename}.jpg`;
-    downloadLink.href = this.#outputImage.src;
-    const fileOutputContainer = this.#$("#file-output-container");
-    fileOutputContainer.innerHTML = "";
-    fileOutputContainer.append(this.#outputImage);
+    this.#file = file;
+    await this.#drawInput();
+    await this.#loadBlob(file);
+  }
+
+  /**
+   * @param {Blob} blob
+   */
+  async #loadBlob(blob) {
+    this.#blob = blob;
+    this.#bitmap?.close();
+    this.#bitmap = await createImageBitmap(blob, {
+      colorSpaceConversion: "none",
+    });
+  }
+
+  /**
+   * @param {AbortSignal} signal
+   */
+  async #deepFry(signal) {
+    try {
+      /** @type {HTMLCanvasElement} */
+      const canvas = this.#$("#canvas-output");
+      const ctx = canvas.getContext("2d", {
+        alpha: false,
+        colorSpace: "srgb",
+      });
+      this.progress = 0;
+      const [w, h] = this.#getScaledSize(
+        this.#bitmap.width,
+        this.#bitmap.height,
+      );
+      canvas.width = w;
+      canvas.height = h;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(this.#bitmap, 0, 0, w, h);
+      const count = this.#fryCount;
+      for (let i = 0; i < count; i++) {
+        signal.throwIfAborted();
+        this.progress = (i + 1) / count;
+        ctx.drawImage(this.#bitmap, 0, 0, w, h);
+        const quality = this.#getFryQuality(i);
+        const blob = await new Promise((resolve) => {
+          canvas.toBlob(resolve, "image/jpeg", quality);
+        });
+        await this.#loadBlob(blob);
+        await this.#sleep(0);
+      }
+    } finally {
+      if (!signal.aborted) {
+        this.progress = 1;
+      }
+    }
+  }
+
+  async #drawInput() {
+    /** @type {HTMLImageElement} */
+    const img = this.#$("#image-input");
+    img.hidden = false;
+    if (img.src) {
+      URL.revokeObjectURL(img.src);
+    }
+    img.src = URL.createObjectURL(this.#file);
+  }
+
+  async #render(signal) {
+    if (!this.#bitmap) {
+      return;
+    }
+    await this.#deepFry(signal);
+    this.#downloadLink.download = `${this.#file.name}.jpg`;
+    if (this.#downloadLink.href) {
+      URL.revokeObjectURL(this.#downloadLink.href);
+    }
+    this.#downloadLink.href = URL.createObjectURL(this.#blob);
+    this.#$("#output-form fieldset").disabled = false;
   }
 
   /**

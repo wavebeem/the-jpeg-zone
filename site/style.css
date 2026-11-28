@@ -17,43 +17,44 @@
   --candy-card-radius: 16px;
   --candy-shadow-outset: 0 1px var(--candy-color-shadow1);
 
-  --candy-color-background1: hsl(0 0% 100%);
-  --candy-color-background2: hsl(0 0% 98%);
-  --candy-color-background3: hsl(0 0% 92%);
-  --candy-color-background4: hsl(0 0% 88%);
-  --candy-color-text1: hsl(0 0% 5%);
-  --candy-color-text2: hsl(0 0% 25%);
-  --candy-color-border1: hsl(0 0% 40%);
-  --candy-color-border2: hsl(0 0% 60%);
-  --candy-color-border3: hsl(0 0% 70%);
-  --candy-color-accent-background1: hsl(0 0% 30%);
-  --candy-color-accent-background2: hsl(0 0% 25%);
-  --candy-color-accent-border1: hsl(0 0% 10%);
-  --candy-color-accent-text1: hsl(0 0% 100%);
-  --candy-color-shadow1: hsl(0 0% 5% / 10%);
+  --candy-color-background1: hsl(75 25% 100%);
+  --candy-color-background2: hsl(75 25% 100%);
+  --candy-color-background3: hsl(75 25% 96%);
+  --candy-color-background4: hsl(75 25% 94%);
+  --candy-color-text1: hsl(75 25% 5%);
+  --candy-color-text2: hsl(75 25% 25%);
+  --candy-color-border1: hsl(75 25% 45%);
+  --candy-color-border2: hsl(75 25% 70%);
+  --candy-color-border3: hsl(75 25% 80%);
+  --candy-color-accent-background1: hsl(115 45% 35%);
+  --candy-color-accent-background2: hsl(115 45% 32%);
+  --candy-color-accent-border1: hsl(115 45% 10%);
+  --candy-color-accent-text1: hsl(115 45% 100%);
+  --candy-color-shadow1: hsl(115 45% 5% / 0%);
 
-  --candy-button-padding-vertical: 1rem;
-  --candy-select-padding-vertical: 1rem;
+  /* --candy-button-padding-vertical: 1rem;
+  --candy-select-padding-vertical: 1rem; */
 
-  background: var(--candy-color-background3);
+  background: var(--candy-color-background1);
+  color: var(--candy-color-text1);
 }
 
 @media (prefers-color-scheme: dark) {
   .candy-root {
-    --candy-color-background1: hsl(0 0% 10%);
-    --candy-color-background2: hsl(0 0% 20%);
-    --candy-color-background3: hsl(0 0% 17%);
-    --candy-color-background4: hsl(0 0% 14%);
-    --candy-color-text1: hsl(0 0% 90%);
-    --candy-color-text2: hsl(0 0% 70%);
-    --candy-color-border1: hsl(0 0% 55%);
-    --candy-color-border2: hsl(0 0% 26%);
-    --candy-color-border3: hsl(0 0% 22%);
-    --candy-color-accent-background1: hsl(0 0% 90%);
-    --candy-color-accent-background2: hsl(0 0% 85%);
-    --candy-color-accent-border1: hsl(0 0% 100%);
-    --candy-color-accent-text1: hsl(0 80% 5%);
-    --candy-color-shadow1: hsl(0 0% 5% / 50%);
+    --candy-color-background1: hsl(115 15% 10%);
+    --candy-color-background2: hsl(115 15% 19%);
+    --candy-color-background3: hsl(115 15% 17%);
+    --candy-color-background4: hsl(115 15% 14%);
+    --candy-color-text1: hsl(115 15% 90%);
+    --candy-color-text2: hsl(115 15% 70%);
+    --candy-color-border1: hsl(115 15% 40%);
+    --candy-color-border2: hsl(115 15% 30%);
+    --candy-color-border3: hsl(115 15% 26%);
+    --candy-color-accent-background1: hsl(75 60% 55%);
+    --candy-color-accent-background2: hsl(75 60% 50%);
+    --candy-color-accent-border1: hsl(75 60% 60%);
+    --candy-color-accent-text1: hsl(75 45% 5%);
+    --candy-color-shadow1: hsl(115 45% 5% / 0%);
   }
 }
 
@@ -63,11 +64,20 @@ html {
 }
 
 body {
-  max-width: 600px;
   padding: 2rem 0.5rem;
-  margin: 0 auto;
   font-family: "Roboto", system-ui, sans-serif;
   line-height: 1.5;
+
+  max-width: 75rem;
+  margin: 0 auto;
+}
+
+form,
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: contents;
 }
 
 hgroup {
@@ -96,7 +106,27 @@ fieldset {
 }
 
 jpeg-app {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  > * {
+    grid-column: 1 / -1;
+  }
+
+  @media (width >= 40rem) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* align-items: start; */
+
+    #input-area {
+      grid-column: 1;
+    }
+
+    #output-area {
+      grid-column: 2;
+    }
+  }
 }
 
 .margin0 {
@@ -105,6 +135,19 @@ jpeg-app {
 
 .margin-top2 {
   margin-top: 0.5rem;
+}
+
+.margin-top-2 {
+  margin-top: -0.5rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .box:where(:not([hidden])) {
@@ -175,12 +218,28 @@ jpeg-app {
   text-align: center;
 }
 
-.candy-button.candy-primary {
-  font-size: 1.15rem;
+.candy-button {
+  font-size: 1.25rem;
+}
+
+.text-heart {
+  font-size: 1.25em;
+  vertical-align: middle;
+  color: oklch(
+    from var(--candy-color-accent-background1) l calc(c * 1.5) 30 /
+    80%
+  );
 }
 
 hgroup {
   place-self: center;
+}
+
+footer {
+  font-weight: 500;
+  font-size: 1.15rem;
+
+  padding-inline: 0.5rem;
 }
 
 .title {
@@ -193,8 +252,33 @@ hgroup {
   letter-spacing: calc(1em / 16);
 }
 
-.candy-select {
+:is(.candy-button, .candy-select):where(:not(:disabled)) {
   border-color: var(--candy-color-border2);
+  border-top-color: var(--candy-color-border3);
+  border-bottom-color: var(--candy-color-border1);
+}
+
+.candy-button.candy-primary:where(:not(:disabled)) {
+  border-color: rgb(from var(--candy-color-accent-border1) r g b / 50%);
+  border-top-color: rgb(from var(--candy-color-accent-border1) r g b / 25%);
+  border-bottom-color: rgb(from var(--candy-color-accent-border1) r g b / 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :is(.candy-button, .candy-select):where(:not(:disabled)) {
+    border-color: var(--candy-color-border2);
+    border-bottom-color: var(--candy-color-border3);
+    border-top-color: var(--candy-color-border1);
+  }
+
+  .candy-button.candy-primary:where(:not(:disabled)) {
+    border-color: rgb(from var(--candy-color-accent-border1) r g b / 50%);
+    border-bottom-color: rgb(
+      from var(--candy-color-accent-border1) r g b /
+      25%
+    );
+    border-top-color: rgb(from var(--candy-color-accent-border1) r g b / 100%);
+  }
 }
 
 .candy-link {
@@ -204,6 +288,21 @@ hgroup {
 .candy-card {
   background-color: var(--candy-color-background4);
   border-color: transparent;
-  /* border-color: var(--candy-color-border3); */
   box-shadow: none;
+}
+
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.canvas-output {
+  &[data-loading="true"] {
+    filter: grayscale(50%);
+    opacity: 0.25;
+  }
+}
+
+[hidden] {
+  display: none;
 }
