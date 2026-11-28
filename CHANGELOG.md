@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-27
+
+- Full UI overhaul
+- Should be faster and more responsive if changing settings while frying
+- Side-by-side view on desktop
+- Updated the website theme a little bit
+
 ## 2026-09-23
 
 - Added "Roboto" web font

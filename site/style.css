@@ -222,6 +222,14 @@ jpeg-app {
   font-size: 1.25rem;
 }
 
+.text-heart {
+  font-size: 1.25em;
+  vertical-align: middle;
+  color: oklch(
+    from var(--candy-color-accent-background1) l calc(c * 1.5) 30 / 80%
+  );
+}
+
 hgroup {
   place-self: center;
 }
@@ -291,4 +299,8 @@ canvas {
     filter: grayscale(50%);
     opacity: 0.25;
   }
+}
+
+[hidden] {
+  display: none;
 }
