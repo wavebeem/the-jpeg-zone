@@ -226,7 +226,8 @@ jpeg-app {
   font-size: 1.25em;
   vertical-align: middle;
   color: oklch(
-    from var(--candy-color-accent-background1) l calc(c * 1.5) 30 / 80%
+    from var(--candy-color-accent-background1) l calc(c * 1.5) 30 /
+    80%
   );
 }
 
@@ -273,7 +274,8 @@ footer {
   .candy-button.candy-primary:where(:not(:disabled)) {
     border-color: rgb(from var(--candy-color-accent-border1) r g b / 50%);
     border-bottom-color: rgb(
-      from var(--candy-color-accent-border1) r g b / 25%
+      from var(--candy-color-accent-border1) r g b /
+      25%
     );
     border-top-color: rgb(from var(--candy-color-accent-border1) r g b / 100%);
   }
